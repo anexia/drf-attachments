@@ -1,1 +1,1 @@
-from rtr_zrdb.attachments.models.models import *
+from .models import *

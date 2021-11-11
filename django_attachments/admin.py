@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from attachments.models.models import Attachment
+from django_attachments.models.models import Attachment
 
 __all__ = [
     "AttachmentInlineAdmin",

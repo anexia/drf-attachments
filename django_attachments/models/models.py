@@ -2,8 +2,8 @@ import os
 import uuid
 from uuid import uuid1
 
-from attachments.models.managers import AttachmentManager
-from attachments.uitls import get_mime_type, get_extension, remove
+from django_attachments.models.managers import AttachmentManager
+from django_attachments.uitls import get_mime_type, get_extension, remove
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType

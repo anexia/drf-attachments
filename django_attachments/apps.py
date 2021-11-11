@@ -27,4 +27,4 @@ class AttachmentsConfig(AppConfig):
         post_migrate.connect(create_global_permissions_for_app, sender=self)
 
         # import signal handlers
-        import attachments.handlers
+        import django_attachments.handlers

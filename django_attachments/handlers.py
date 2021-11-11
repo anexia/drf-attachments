@@ -3,7 +3,7 @@ import os
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from attachments.models.models import Attachment
+from django_attachments.models.models import Attachment
 
 
 @receiver(post_delete, sender=Attachment)

@@ -3,7 +3,7 @@
 import django.contrib.postgres.fields.jsonb
 from django.db import migrations, models
 import django.db.models.deletion
-import rtr_zrdb.attachments.models.models
+from django_attachments.models.models import attachment_upload_path
 import uuid
 
 
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(blank=True, max_length=255, verbose_name='name')),
                 ('context', models.CharField(blank=True, help_text="Additional info about the attachment's context/meaning.", max_length=255, verbose_name='context')),
                 ('meta', django.contrib.postgres.fields.jsonb.JSONField(help_text='Additional info about the attachment (e.g. file meta data: mime_type, extension, size).', verbose_name='meta')),
-                ('file', models.FileField(upload_to=rtr_zrdb.attachments.models.models.attachment_upload_path, verbose_name='file')),
+                ('file', models.FileField(upload_to=attachment_upload_path, verbose_name='file')),
                 ('object_id', models.UUIDField()),
                 ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
             ],
