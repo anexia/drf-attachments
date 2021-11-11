@@ -1,0 +1,9 @@
+/**
+ * Disables the default file field link, since it is not accessible anyway.
+ * Note: The link can still be activated with Tab + Enter.
+ */
+.field-file a[href^="/media/attachments/"] {
+    pointer-events: none;
+    text-decoration: none;
+    color: currentColor;
+}
