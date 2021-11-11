@@ -37,7 +37,7 @@ def attachment_upload_path(attachment, filename):
 
     NOTE: DO NOT CHANGE THIS METHOD NAME (keep migrations sane).
     If you ever have to rename/remove this method, you need to mock it (to simply return None) in every migration
-    that references to attachments.models.models.attachment_upload_path
+    that references to django_attachments.models.models.attachment_upload_path
     :param attachment:
     :param filename:
     :return:

@@ -7,6 +7,8 @@ __all__ = [
     "AttachmentQuerySet",
 ]
 
+from django_userforeignkey.request import get_current_user
+
 
 def filter_viewable_content_types(queryset, orig_queryset):
     """
@@ -23,27 +25,12 @@ class AttachmentQuerySet(QuerySet):
     """
     def viewable(self, *args, **kwargs):
         """
-        Override for model specific filtering
-        Show only attachments of content_objects belonging to the logged-in user.
-        E.g. if `Attachment` can be related to a model `users.UserVehicle`:
-            def viewable(self, *args, **kwargs):
-                queryset = super().viewable(*args, **kwargs)
-
-                from django_userforeignkey.request import get_current_user
-                user = get_current_user()
-                if not user.is_superuser:
-                    from <project-name>.users.models import UserVehicle
-                    # user may only see attachments of UserVehicles they may view
-                    viewable_vehicles = UserVehicle.objects.viewable()
-                    queryset = queryset.filter(users_uservehicles__in=viewable_vehicles)
-
-                return queryset
-
-        :param args:
-        :param kwargs:
-        :return:
+        Todo: Extend permission checks
         """
-        return super().viewable(*args, **kwargs)
+        user = get_current_user()
+        if user.is_superuser:
+            return self.all()
+        return self.none()
 
     def delete(self):
         """

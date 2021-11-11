@@ -111,3 +111,11 @@ To manage file uploads for any existing model you must create a one-to-many "att
         ...
     )
     ```
+
+5. Add attachment DRF route
+   ```
+   from django_attachments.rest.views import AttachmentViewSet
+   
+   router = get_api_router()
+   router.register(r"attachment", AttachmentViewSet)
+   ```

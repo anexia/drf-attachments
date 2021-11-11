@@ -1,10 +1,8 @@
-from attachments.models.models import Attachment
-from attachments.rest.renderers import FileDownloadRenderer
-from attachments.rest.serializers import AttachmentSerializer
+from django_attachments.models.models import Attachment
+from django_attachments.rest.renderers import FileDownloadRenderer
+from django_attachments.rest.serializers import AttachmentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import FileResponse, Http404
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action, parser_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
@@ -53,24 +51,8 @@ class AttachmentViewSet(GenericViewSet):
         return super().get_serializer(*args, many=many, **kwargs)
 
     def get_queryset(self):
-        """ Limits the access to the currently logged-in user (according to the attachment's content_object) """
-        # workaround to keep the ViewSet compatible with open api schema generation
-        if self.request is None:
-            return Attachment.objects.none()
-
         return Attachment.objects.viewable()
 
-    # use the FileDownloadRenderer to add "type" and "format" to the openAPI schema
-    @swagger_auto_schema(
-        responses={
-            200: openapi.Response('OK', schema=openapi.Schema(type=openapi.TYPE_FILE)),
-            404: openapi.Response('Not found', schema=openapi.Schema(type=openapi.TYPE_OBJECT)),
-            503: openapi.Response(
-                'Service unavailable / Database unavailable',
-                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
-            ),
-        }
-    )
     @action(detail=True, methods=["GET"], renderer_classes=[JSONRenderer, FileDownloadRenderer])
     def download(self, request, format=None, *args, **kwargs):
         """ Downloads the uploaded attachment file. """

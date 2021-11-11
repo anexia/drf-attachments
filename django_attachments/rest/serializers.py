@@ -9,7 +9,7 @@ __all__ = [
     "AttachmentSubSerializer",
 ]
 
-from attachments.models.models import Attachment
+from django_attachments.models.models import Attachment
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
