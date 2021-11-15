@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 from django_attachments.models.models import Attachment
@@ -5,6 +6,11 @@ from django_attachments.models.models import Attachment
 __all__ = [
     "AttachmentInlineAdmin",
 ]
+
+
+@admin.register(Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    pass
 
 
 class AttachmentInlineAdmin(GenericTabularInline):

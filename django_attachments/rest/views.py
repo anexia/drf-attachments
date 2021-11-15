@@ -1,15 +1,16 @@
+from rest_framework import viewsets
+
 from django_attachments.models.models import Attachment
 from django_attachments.rest.renderers import FileDownloadRenderer
 from django_attachments.rest.serializers import AttachmentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from django.http import FileResponse, Http404
+from django.http import FileResponse
 from rest_framework.decorators import action, parser_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
-from rest_framework.viewsets import GenericViewSet
 
 __all__ = [
     "AttachmentViewSet",
@@ -33,7 +34,7 @@ def _build_download_response(attachment: Attachment):
 
 
 @parser_classes([MultiPartParser])
-class AttachmentViewSet(GenericViewSet):
+class AttachmentViewSet(viewsets.ModelViewSet):
     """ Manages any attachments according to their respective content_object. """
 
     queryset = Attachment.objects.none()
@@ -44,7 +45,6 @@ class AttachmentViewSet(GenericViewSet):
     pagination_class = LimitOffsetPagination
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated,)
-    http_method_names = ['get', 'options', 'head']
 
     def get_serializer(self, *args, **kwargs):
         many = kwargs.pop('many', isinstance(kwargs.get('data'), (list, tuple)))

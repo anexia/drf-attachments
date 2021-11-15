@@ -1,6 +1,6 @@
+import importlib
+
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from generic_relations.relations import GenericRelatedField
 from rest_framework import serializers
 from rest_framework.fields import ChoiceField, FileField, ReadOnlyField
 
@@ -12,6 +12,12 @@ __all__ = [
 from django_attachments.models.models import Attachment
 
 
+def get_content_object_field():
+    module_name, callable_name = settings.ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE.rsplit('.', maxsplit=1)
+    backend_module = importlib.import_module(module_name)
+    return getattr(backend_module, callable_name)()
+
+
 class AttachmentSerializer(serializers.ModelSerializer):
     """
     Attachment serializer with a `GenericRelatedField` mapping all possible models (content_types) with attachments
@@ -19,30 +25,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     """
 
     file = FileField(write_only=True, required=True)
-
-    # any model with GenericRelation to Attachment must be added here to allow proper REST usage
-    # make sure to use the correct view_name
-    # (<model>-detail by default, if no different basename was registered in a router)
-    # e.g. if `Attachment` can be related to a model `Person`:
-    # content_object = GenericRelatedField(
-    #     {
-    #         Person: serializers.HyperlinkedRelatedField(
-    #             queryset=Person.objects.all(),
-    #             view_name="persons-detail",
-    #         ),  # persons
-    #     },
-    #     help_text=_(
-    #         "Unambiguous URL to a single resource (e.g. <domain>/api/v1/person/1/). "
-    #         "Resources currently in use: person"
-    #     ),
-    # )
-    content_object = GenericRelatedField(
-        {},
-        help_text=_(
-            "Unambiguous URL to a single resource (e.g. <domain>/api/v1/<related-model>/1/). "
-            "Resources currently in use: None"
-        ),
-    )
+    content_object = get_content_object_field()
 
     class Meta:
         model = Attachment

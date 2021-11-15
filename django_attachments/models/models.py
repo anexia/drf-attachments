@@ -180,6 +180,8 @@ class Attachment(Model):
         self.unique_upload_per_context = getattr(meta, "unique_upload_per_context", False)
 
     def set_file_meta(self):
+        if self.meta is None:
+            self.meta = {}
         self.meta['mime_type'] = get_mime_type(self.file)
         self.meta['extension'] = get_extension(self.file)
         self.meta['size'] = self.file.size
