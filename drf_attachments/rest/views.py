@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from django_attachments.models.models import Attachment
-from django_attachments.rest.renderers import FileDownloadRenderer
-from django_attachments.rest.serializers import AttachmentSerializer
+from drf_attachments.models.models import Attachment
+from drf_attachments.rest.renderers import FileDownloadRenderer
+from drf_attachments.rest.serializers import AttachmentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import FileResponse
 from rest_framework.decorators import action, parser_classes

@@ -1,6 +1,6 @@
 """
-Django settings for "tests" project which assures the functionality of the "django-attachments" package
-(https://github.com/anexia-it/django-attachments).
+Django settings for "tests" project which assures the functionality of the "drf-attachments" package
+(https://github.com/anexia-it/drf-attachments).
 """
 
 import os
@@ -30,9 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # include django-attachments
-    'django_attachments',
+    'drf_attachments',
 ]
 
 MIDDLEWARE = [

@@ -1,13 +1,13 @@
-# Django Attachments
+# DRF Attachments
 
-A django module to manage any model's file up-/downloads by relating an Attachment model to it.
+Django rest framework module to manage any model's file up-/downloads by relating an Attachment model to it.
 
 ## Installation
 
 Install using pip:
 
 ```
-pip install git+https://github.com/anexia-it/django-attachments@main
+pip install git+https://github.com/anexia-it/drf-attachments@main
 ```
 
 Add model_prefix to your INSTALLED_APPS list. Make sure it is the first app in the list
@@ -15,7 +15,7 @@ Add model_prefix to your INSTALLED_APPS list. Make sure it is the first app in t
 ```
 INSTALLED_APPS = [
     ...
-    'django_attachments',
+    'drf_attachments',
     ...
 ]
 ```
@@ -114,7 +114,7 @@ To manage file uploads for any existing model you must create a one-to-many "att
 
 5. Add attachment DRF route
    ```
-   from django_attachments.rest.views import AttachmentViewSet
+   from drf_attachments.rest.views import AttachmentViewSet
    
    router = get_api_router()
    router.register(r"attachment", AttachmentViewSet)

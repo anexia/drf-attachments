@@ -6,5 +6,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/anexia-it/django-attachments/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/anexia-it/django-attachments/releases/tag/1.0.0
+[Unreleased]: https://github.com/anexia-it/drf-attachments/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/anexia-it/drf-attachments/releases/tag/1.0.0

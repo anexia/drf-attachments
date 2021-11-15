@@ -2,8 +2,8 @@ import os
 import uuid
 from uuid import uuid1
 
-from django_attachments.models.managers import AttachmentManager
-from django_attachments.uitls import get_mime_type, get_extension, remove
+from drf_attachments.models.managers import AttachmentManager
+from drf_attachments.uitls import get_mime_type, get_extension, remove
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -37,7 +37,7 @@ def attachment_upload_path(attachment, filename):
 
     NOTE: DO NOT CHANGE THIS METHOD NAME (keep migrations sane).
     If you ever have to rename/remove this method, you need to mock it (to simply return None) in every migration
-    that references to django_attachments.models.models.attachment_upload_path
+    that references to drf_attachments.models.models.attachment_upload_path
     :param attachment:
     :param filename:
     :return:

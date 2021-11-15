@@ -9,7 +9,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='django-attachments',
+    name='drf-attachments',
     version=os.getenv('PACKAGE_VERSION', '0.0.0').replace('refs/tags/', ''),
     packages=find_packages(),
     include_package_data=True,
@@ -17,7 +17,7 @@ setup(
     description='A django module to manage any model\'s file up-/downloads by relating an Attachment model to it.',
     long_description=README,
     long_description_content_type='text/markdown',
-    url='https://github.com/anexia-it/django-attachments',
+    url='https://github.com/anexia-it/drf-attachments',
     author='Alexandra Bruckner',
     author_email='abruckner@anexia-it.com',
     install_requires=[

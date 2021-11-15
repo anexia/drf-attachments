@@ -1,4 +1,4 @@
-from django_attachments.models.querysets import AttachmentQuerySet
+from drf_attachments.models.querysets import AttachmentQuerySet
 from django.db import models
 
 __all__ = [

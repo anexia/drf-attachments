@@ -9,7 +9,7 @@ __all__ = [
     "AttachmentSubSerializer",
 ]
 
-from django_attachments.models.models import Attachment
+from drf_attachments.models.models import Attachment
 
 
 def get_content_object_field():

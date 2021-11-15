@@ -20,11 +20,11 @@ def create_global_permissions_for_app(sender, **kwargs):
 
 
 class AttachmentsConfig(AppConfig):
-    name = "django_attachments"
+    name = "drf_attachments"
     verbose_name = _("attachments")
 
     def ready(self):
         post_migrate.connect(create_global_permissions_for_app, sender=self)
 
         # import signal handlers
-        import django_attachments.handlers
+        import drf_attachments.handlers
