@@ -9,7 +9,7 @@ __all__ = [
     "AttachmentSubSerializer",
 ]
 
-from drf_attachments.models.models import Attachment
+from drf_attachments.models.models import Attachment, attachment_context_choices
 
 
 def get_content_object_field():
@@ -26,6 +26,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     file = FileField(write_only=True, required=True)
     content_object = get_content_object_field()
+    context = ChoiceField(choices=attachment_context_choices())
 
     class Meta:
         model = Attachment
@@ -46,7 +47,10 @@ class AttachmentSubSerializer(serializers.ModelSerializer):
     # pk is read-only by default
     download_url = ReadOnlyField()
     name = ReadOnlyField()
-    context = ChoiceField(choices=settings.ATTACHMENT_CONTEXT_CHOICES, read_only=True)
+    context = ChoiceField(
+        choices=attachment_context_choices(include_default=False, values_list=False),
+        read_only=True
+    )
 
     class Meta:
         model = Attachment

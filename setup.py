@@ -23,6 +23,7 @@ setup(
     install_requires=[
         'python-magic>=0.4.18',
         'rest-framework-generic-relations>=2.0.0',
+        'django-userforeignkey>=0.4',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

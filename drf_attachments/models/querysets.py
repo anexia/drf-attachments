@@ -1,3 +1,4 @@
+import importlib
 import os
 
 from django.conf import settings
@@ -7,15 +8,23 @@ __all__ = [
     "AttachmentQuerySet",
 ]
 
-from django_userforeignkey.request import get_current_user
+
+def filter_viewable_content_types(queryset):
+    module_name, callable_name = settings.ATTACHMENT_FILTER_VIEWABLE_CONTENT_OBJECTS_CALLABLE.rsplit('.', maxsplit=1)
+    backend_module = importlib.import_module(module_name)
+    return getattr(backend_module, callable_name)(queryset)
 
 
-def filter_viewable_content_types(queryset, orig_queryset):
-    """
-    Override to return viewable related content_types.
+def filter_editable_content_types(queryset):
+    module_name, callable_name = settings.ATTACHMENT_FILTER_EDITABLE_CONTENT_OBJECTS_CALLABLE.rsplit('.', maxsplit=1)
+    backend_module = importlib.import_module(module_name)
+    return getattr(backend_module, callable_name)(queryset)
 
-    """
-    return queryset
+
+def filter_deletable_content_types(queryset):
+    module_name, callable_name = settings.ATTACHMENT_FILTER_DELETABLE_CONTENT_OBJECTS_CALLABLE.rsplit('.', maxsplit=1)
+    backend_module = importlib.import_module(module_name)
+    return getattr(backend_module, callable_name)(queryset)
 
 
 class AttachmentQuerySet(QuerySet):
@@ -24,13 +33,13 @@ class AttachmentQuerySet(QuerySet):
     to all relevant queryset methods to allow proper access
     """
     def viewable(self, *args, **kwargs):
-        """
-        Todo: Extend permission checks
-        """
-        user = get_current_user()
-        if user.is_superuser:
-            return self.all()
-        return self.none()
+        return filter_viewable_content_types(self)
+
+    def editable(self, *args, **kwargs):
+        return filter_editable_content_types(self)
+
+    def deletable(self, *args, **kwargs):
+        return filter_deletable_content_types(self)
 
     def delete(self):
         """

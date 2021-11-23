@@ -1,9 +1,8 @@
+import importlib
 import os
 import uuid
 from uuid import uuid1
 
-from drf_attachments.models.managers import AttachmentManager
-from drf_attachments.uitls import get_mime_type, get_extension, remove
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -15,6 +14,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_userforeignkey.request import get_current_request
 from rest_framework.exceptions import ValidationError
 from rest_framework.reverse import reverse
+
+from drf_attachments.models.managers import AttachmentManager
+from drf_attachments.utils import get_mime_type, get_extension, remove
 
 __all__ = [
     "Attachment",
@@ -28,6 +30,12 @@ class AttachmentFileStorage(FileSystemStorage):
     """
     def __init__(self):
         super().__init__(location=settings.PRIVATE_ROOT)
+
+
+def get_context_translatables():
+    module_name, callable_name = settings.ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE.rsplit('.', maxsplit=1)
+    backend_module = importlib.import_module(module_name)
+    return getattr(backend_module, callable_name)()
 
 
 def attachment_upload_path(attachment, filename):
@@ -45,6 +53,66 @@ def attachment_upload_path(attachment, filename):
     filename, file_extension = os.path.splitext(filename)
     month_directory = timezone.now().strftime("%Y%m")
     return f"attachments/{month_directory}/{str(uuid1())}{file_extension}"
+
+
+def attachment_context_choices(include_default=True, values_list=True, translated=True):
+    """
+    Extract all unique context definitions from settings "ATTACHMENT_CONTEXT_x" + "ATTACHMENT_DEFAULT_CONTEXT"
+    """
+    setting_keys = dir(settings)
+    if values_list:
+        context_list = [
+            getattr(settings, x, '') for x in setting_keys if (
+                (x.startswith("ATTACHMENT_CONTEXT_") and not x.endswith("_CALLABLE")) or (
+                    include_default and x == "ATTACHMENT_DEFAULT_CONTEXT"
+                )
+            )
+        ]
+
+        context_list = list(set(context_list))
+        if translated:
+            translations = get_context_translatables()
+            translated_contexts = []
+            for context in context_list:
+                translation = translations.get(context, context)
+                translated_contexts.append(translation)
+
+            context_list = list(set(translated_contexts))
+
+        return context_list
+
+    context_values = []
+    context_tuples = []  # list gets converted on return
+    for key in setting_keys:
+        if (key.startswith("ATTACHMENT_CONTEXT_") and not key.endswith("_CALLABLE")) or (
+                include_default and key == "ATTACHMENT_DEFAULT_CONTEXT"
+        ):
+            context = getattr(settings, key, '')
+            if context not in context_values:
+                context_values.append(context)
+
+                if translated:
+                    translation = attachment_context_translatable(context)
+                    context_tuples.append((context, translation))
+                else:
+                    context_tuples.append((context, context))
+
+    return tuple(context_tuples)
+
+
+def attachment_default_context():
+    """
+    Extract ATTACHMENT_DEFAULT_CONTEXT from the settings (if defined)
+    """
+    return getattr(settings, "ATTACHMENT_DEFAULT_CONTEXT", None)
+
+
+def attachment_context_translatable(context):
+    """
+    Return only a single context's translation from the manually defined translation dict
+    """
+    translations = get_context_translatables()
+    return translations.get(context, context)
 
 
 class Attachment(Model):
@@ -91,7 +159,13 @@ class Attachment(Model):
 
     # Generic Relation (to add one of multiple different models/content types to an attachment)
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
-    object_id = UUIDField()
+    # allow any PrimaryKey (Integer, Char, UUID) as related object_id
+    object_id = CharField(
+        db_index=True,
+        max_length=64,
+        blank=False,
+        null=False,
+    )
     content_object = GenericForeignKey()
 
     creation_date = DateTimeField(
@@ -114,7 +188,7 @@ class Attachment(Model):
         ordering = ("creation_date",)
 
     def __str__(self):
-        return f"{self.content_type} | {self.object_id} | {self.context} | {self.name}"
+        return f"{self.content_type} | {self.object_id} | {self.context_label} | {self.name}"
 
     @property
     def is_image(self):
@@ -127,8 +201,16 @@ class Attachment(Model):
         return request.build_absolute_uri(relative_url)
 
     @property
+    def default_context(self):
+        return attachment_default_context()
+
+    @property
     def valid_contexts(self):
-        return [x[0] for x in settings.ATTACHMENT_CONTEXT_CHOICES]
+        return attachment_context_choices(translated=False)
+
+    @property
+    def context_label(self):
+        return attachment_context_translatable(self.context)
 
     def is_modified(self):
         return self.creation_date != self.last_modification_date
@@ -144,20 +226,17 @@ class Attachment(Model):
 
     def save(self, *args, **kwargs):
         # set computed values for direct and API access
-        self.set_default_context()
-        self.set_attachment_meta()  # read the AttachmentMeta settings from the content_object's model
-        self.set_file_meta()  # extract and store mime_type, extension and size from the current file
+        self.set_and_validate()
+
         super().save(*args, **kwargs)
 
-    def clean(self):
-        super().clean()
-
-        # set computed values for form checks (Django admin)
-        self.set_default_context()
+    def set_and_validate(self):
+        # set computed values for direct and API access
         self.set_attachment_meta()  # read the AttachmentMeta settings from the content_object's model
         self.set_file_meta()  # extract and store mime_type, extension and size from the current file
 
         self.validate_context()  # validate that the context is allowed
+        self.set_default_context()  # set the default context if yet empty (and if default is defined)
         self.validate_file()  # validate the file and its mime_type, extension and size
         self.manage_uniqueness()  # remove any other Attachments for content_objects with
         self.cleanup_file()  # remove the old file of a changed Attachment
@@ -165,7 +244,7 @@ class Attachment(Model):
     def set_default_context(self):
         """ Set context to settings.ATTACHMENT_DEFAULT_CONTEXT (if defined) if it's still empty """
         if not self.context and hasattr(settings, 'ATTACHMENT_DEFAULT_CONTEXT'):
-            self.context = settings.ATTACHMENT_DEFAULT_CONTEXT
+            self.context = self.default_context
 
     def set_attachment_meta(self):
         meta = getattr(self.content_object, "AttachmentMeta", None)
@@ -334,10 +413,14 @@ class Attachment(Model):
         :return:
         """
         if self.pk:
-            # on update delete the old file if a new one was inserted
-            # (delete_orphan only removes image on deletion of the whole attachment instance)
-            old_instance = Attachment.objects.get(pk=self.pk)
+            try:
+                # on update delete the old file if a new one was inserted
+                # (delete_orphan only removes image on deletion of the whole attachment instance)
+                old_instance = Attachment.objects.get(pk=self.pk)
 
-            # on update delete the old file if a new one was inserted
-            if old_instance.file != self.file:
-                remove(old_instance.file)
+                # on update delete the old file if a new one was inserted
+                if old_instance.file != self.file:
+                    remove(old_instance.file)
+            except Attachment.DoesNotExist:
+                # Do nothing if Attachment does not yet exist in DB
+                pass
