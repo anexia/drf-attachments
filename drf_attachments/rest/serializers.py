@@ -26,7 +26,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     file = FileField(write_only=True, required=True)
     content_object = get_content_object_field()
-    context = ChoiceField(choices=attachment_context_choices())
+    context = ChoiceField(choices=attachment_context_choices(values_list=False))
 
     class Meta:
         model = Attachment
