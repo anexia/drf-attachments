@@ -33,9 +33,12 @@ class AttachmentFileStorage(FileSystemStorage):
 
 
 def get_context_translatables():
-    module_name, callable_name = settings.ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE.rsplit('.', maxsplit=1)
-    backend_module = importlib.import_module(module_name)
-    return getattr(backend_module, callable_name)()
+    context_translatables_callable = getattr(settings, "ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE", None)
+    if context_translatables_callable:
+        module_name, callable_name = settings.ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE.rsplit('.', maxsplit=1)
+        backend_module = importlib.import_module(module_name)
+        return getattr(backend_module, callable_name)()
+    return {}
 
 
 def attachment_upload_path(attachment, filename):

@@ -1,8 +1,9 @@
 # DRF Attachments
 
-Django rest framework module to manage any model's file up-/downloads by relating an Attachment model to it.
+Django module to manage any model's file up-/downloads by relating an Attachment model to it.
+The module can be used for extending the Django Admin or for exposing the attachment via Django REST Framework.
 
-## Installation
+## Installation and Setup
 
 1. Install using pip:
 
@@ -20,7 +21,37 @@ INSTALLED_APPS = [
 ]
 ```
 
-3. Add a helper/utils file to your project's source code (e.g. `attachments.py`) and prepare the methods `attachment_content_object_field`, `attachment_context_translatables`, `filter_viewable_content_types`, `filter_editable_content_types` and `filter_deletable_content_types` there.
+## Usage with Django Admin
+
+1. Add minimal settings
+
+```python
+# drf-attachment settings
+ATTACHMENT_MAX_UPLOAD_SIZE = 1024 * 1024 * 25
+ATTACHMENT_CONTEXT_CONTEXT_1 = "CONTEXT-1"
+ATTACHMENT_CONTEXT_CONTEXT_2 = "CONTEXT-2"
+```
+
+2. Add `AttachmentInlineAdmin` or `ReadOnlyAttachmentInlineAdmin` to each model that needs attachment
+
+```python
+from django.contrib import admin
+from drf_attachments.admin import AttachmentInlineAdmin
+
+@admin.register(MyModel)
+class MyModelAdmin(admin.ModelAdmin):
+    inlines = [
+        AttachmentInlineAdmin,
+    ]
+```
+
+`ReadOnlyAttachmentInlineAdmin` is useful when attachments should be provided only by REST API. You may consider
+extending the classes in order to handle additional permission checks.
+
+## Usage with DRF (ToDo: API needs to be simplified)
+
+
+1. Add a helper/utils file to your project's source code (e.g. `attachments.py`) and prepare the methods `attachment_content_object_field`, `attachment_context_translatables`, `filter_viewable_content_types`, `filter_editable_content_types` and `filter_deletable_content_types` there.
 
 ```
 # within app/your_app_name/attachments.py
@@ -62,7 +93,7 @@ def filter_deletable_content_types(queryset):
     
 ```
 
-4. Define the helper/utils methods' paths within your `settings.py` as `ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE` and `ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE`:
+2. Define the helper/utils methods' paths within your `settings.py` as `ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE` and `ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE`:
 ```
 # within settings.py
 
@@ -70,14 +101,14 @@ ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE = "your_app_name.attachments.attachment
 ATTACHMENT_CONTEXT_TRANSLATABLES_CALLABLE = "your_app_name.attachments.attachment_context_translatables"
 ```
 
-5. Add the `ATTACHMENT_MAX_UPLOAD_SIZE` to your `settings.py`:
+3. Add the `ATTACHMENT_MAX_UPLOAD_SIZE` to your `settings.py`:
 ```
 # within settings.py
 
 ATTACHMENT_MAX_UPLOAD_SIZE = env.int("ATTACHMENT_MAX_UPLOAD_SIZE", default=1024 * 1024 * 25)
 ```
 
-6. Define any context choices your attachment files might represent (e.g. "driver's license", "offer", "contract", ...) as `ATTACHMENT_CONTEXT_CHOICES` in the `settings.py`. We recommend defining each context type as constant before adding them to the "choices" dict, e.g.:
+4. Define any context choices your attachment files might represent (e.g. "driver's license", "offer", "contract", ...) as `ATTACHMENT_CONTEXT_CHOICES` in the `settings.py`. We recommend defining each context type as constant before adding them to the "choices" dict, e.g.:
 ```
 # within settings.py
 
@@ -87,14 +118,14 @@ ATTACHMENT_CONTEXT_CONTRACT = 'CONTRACT'
 ATTACHMENT_CONTEXT_OTHER = 'OTHER'
 ```
 
-7. Optionally define a default context in the `settings.py` that will be set automatically each time you save an attachment without explicitly defining a context yourself, e.g.:
+5. Optionally define a default context in the `settings.py` that will be set automatically each time you save an attachment without explicitly defining a context yourself, e.g.:
 ```
 # within settings.py
 ...
 ATTACHMENT_DEFAULT_CONTEXT = 'ATTACHMENT'
 ```
 
-8. Add all possible context choices (and the default value, if defined) to the `attachment_context_translatables` method to make them translatable and detectable via the `makemessages` command, e.g.:
+6. Add all possible context choices (and the default value, if defined) to the `attachment_context_translatables` method to make them translatable and detectable via the `makemessages` command, e.g.:
 ```
 # within app/your_app_name/attachments.py
 

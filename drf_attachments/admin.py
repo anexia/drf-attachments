@@ -1,10 +1,8 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.forms import ChoiceField, ModelForm
-from django.forms.utils import ErrorList
-from django.utils.translation import ugettext_lazy as _
 
-from drf_attachments.models.models import Attachment, attachment_context_choices, attachment_context_translatable
+from drf_attachments.models.models import Attachment, attachment_context_choices
 
 __all__ = [
     "AttachmentInlineAdmin",
@@ -51,13 +49,11 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
     )
 
 
-class AttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):
+class BaseAttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):
     model = Attachment
     extra = 0
     fields = (
-        "context_label",
         "name",
-        "download_url",
         "file",
         "size",
         "mime_type",
@@ -65,19 +61,25 @@ class AttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):
         "creation_date",
     )
     readonly_fields = (
-        "context_label",
-        "name",
-        "download_url",
-        "file",
         "size",
         "mime_type",
         "extension",
         "creation_date",
     )
-    show_change_link = False
-
-    def has_add_permission(self, request, obj=None):
-        return False
 
     class Media:
         css = {"": ("attachments/attachment_admin.css",)}
+
+
+class AttachmentInlineAdmin(BaseAttachmentInlineAdmin):
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    show_change_link = True
+
+
+class ReadOnlyAttachmentInlineAdmin(AttachmentInlineAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    show_change_link = False
