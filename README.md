@@ -8,6 +8,12 @@ The module can be used for extending the Django Admin or for exposing the attach
 1. Install using pip:
 
 ```
+pip install git+https://github.com/anexia-it/drf-attachments@main[drf]
+```
+
+or to install without DRF dependencies (no REST endpoints available from scratch)
+
+```
 pip install git+https://github.com/anexia-it/drf-attachments@main
 ```
 
@@ -43,6 +49,12 @@ class MyModelAdmin(admin.ModelAdmin):
     inlines = [
         AttachmentInlineAdmin,
     ]
+```
+
+3. Optionally define a custom DIR as root for your attachments ("attachments" by default)
+```python
+# settings.py
+ATTACHMENT_UPLOAD_ROOT_DIR = "your/custom/attachments/root/"
 ```
 
 `ReadOnlyAttachmentInlineAdmin` is useful when attachments should be provided only by REST API. You may consider

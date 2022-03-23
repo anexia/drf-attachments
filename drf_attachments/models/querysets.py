@@ -58,3 +58,10 @@ class AttachmentQuerySet(QuerySet):
                     pass
 
         return result
+
+    def get_names_list(self):
+        """
+        Return the names of all files within the queryset as list
+        """
+        names = list(self.values_list('name', flat=True))
+        return ", ".join(names)

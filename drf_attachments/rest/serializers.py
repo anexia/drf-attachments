@@ -1,8 +1,10 @@
 import importlib
 
 from django.conf import settings
+from django_userforeignkey.request import get_current_request
 from rest_framework import serializers
 from rest_framework.fields import ChoiceField, FileField, ReadOnlyField
+from rest_framework.reverse import reverse
 
 __all__ = [
     "AttachmentSerializer",
@@ -60,3 +62,8 @@ class AttachmentSubSerializer(serializers.ModelSerializer):
             "name",
             "context",
         )
+
+    def get_download_url(self, obj):
+        request = get_current_request()
+        relative_url = reverse("attachment-download", kwargs={"pk": obj.id})
+        return request.build_absolute_uri(relative_url)

@@ -7,13 +7,11 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ValidationError
 from django.core.files.storage import FileSystemStorage
 from django.db.models import CASCADE, CharField, DateTimeField, FileField, ForeignKey, Model, UUIDField
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_userforeignkey.request import get_current_request
-from rest_framework.exceptions import ValidationError
-from rest_framework.reverse import reverse
 
 from drf_attachments.models.managers import AttachmentManager
 from drf_attachments.utils import get_mime_type, get_extension, remove
@@ -55,7 +53,7 @@ def attachment_upload_path(attachment, filename):
     """
     filename, file_extension = os.path.splitext(filename)
     month_directory = timezone.now().strftime("%Y%m")
-    return f"attachments/{month_directory}/{str(uuid1())}{file_extension}"
+    return f"{attachment_upload_root_dir()}/{month_directory}/{str(uuid1())}{file_extension}"
 
 
 def attachment_context_choices(include_default=True, values_list=True, translated=True):
@@ -108,6 +106,13 @@ def attachment_default_context():
     Extract ATTACHMENT_DEFAULT_CONTEXT from the settings (if defined)
     """
     return getattr(settings, "ATTACHMENT_DEFAULT_CONTEXT", None)
+
+
+def attachment_upload_root_dir():
+    """
+    Extract ATTACHMENT_UPLOAD_ROOT_DIR from the settings (if defined)
+    """
+    return getattr(settings, "ATTACHMENT_UPLOAD_ROOT_DIR", "attachments")
 
 
 def attachment_context_translatable(context):
@@ -198,12 +203,6 @@ class Attachment(Model):
         return 'mime_type' in self.meta and self.meta['mime_type'] and self.meta['mime_type'].startswith("image")
 
     @property
-    def download_url(self):
-        request = get_current_request()
-        relative_url = reverse("attachment-download", kwargs={"pk": self.id})
-        return request.build_absolute_uri(relative_url)
-
-    @property
     def default_context(self):
         return attachment_default_context()
 
@@ -280,12 +279,7 @@ class Attachment(Model):
                 context=self.context,
                 valid_contexts=", ".join(self.valid_contexts),
             )
-            raise ValidationError(
-                {
-                    "context": error_msg,
-                },
-                code="invalid",
-            )
+            raise ValidationError(error_msg, code="invalid")
 
     def validate_file(self):
         """
