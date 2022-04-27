@@ -1,10 +1,6 @@
-from rest_framework import viewsets
-
-from drf_attachments.models.models import Attachment
-from drf_attachments.rest.renderers import FileDownloadRenderer
-from drf_attachments.rest.serializers import AttachmentSerializer
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import FileResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
 from rest_framework.decorators import action, parser_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
@@ -12,25 +8,13 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 
+from drf_attachments.models.models import Attachment
+from drf_attachments.rest.renderers import FileDownloadRenderer
+from drf_attachments.rest.serializers import AttachmentSerializer
+
 __all__ = [
     "AttachmentViewSet",
 ]
-
-
-def _build_download_response(attachment: Attachment):
-    extension = attachment.get_extension()
-
-    if attachment.name:
-        download_file_name = f"{attachment.name}{extension}"
-    else:
-        download_file_name = f"attachment_{attachment.pk}{extension}"
-    response = FileResponse(
-        open(attachment.file.path, "rb"),
-        as_attachment=True,
-        filename=download_file_name,
-    )
-
-    return response
 
 
 @parser_classes([MultiPartParser])
@@ -57,6 +41,15 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     def download(self, request, format=None, *args, **kwargs):
         """ Downloads the uploaded attachment file. """
         attachment = self.get_object()
+        extension = attachment.get_extension()
 
-        # fetch the attachment as FileResponse
-        return _build_download_response(attachment)
+        if attachment.name:
+            download_file_name = f"{attachment.name}{extension}"
+        else:
+            download_file_name = f"attachment_{attachment.pk}{extension}"
+
+        return FileResponse(
+            open(attachment.file.path, "rb"),
+            as_attachment=True,
+            filename=download_file_name,
+        )
