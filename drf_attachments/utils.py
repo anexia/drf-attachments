@@ -18,11 +18,14 @@ def get_extension(file):
     return file_extension.lower()
 
 
-def remove(file, raise_exceptions=False):
+def remove_file(file_path, raise_exceptions=False):
+    if not os.path.isfile(file_path):
+        return
+
     try:
-        os.remove(file.path)
-    except Exception as e:
+        os.remove(file_path)
+    except Exception:
         if raise_exceptions:
             # forward the thrown exception
-            raise e
+            raise
         # just continue if deletion of old file was not possible and no exceptions should be raised

@@ -1,21 +1,13 @@
-import importlib
-
-from django.conf import settings
 from rest_framework import serializers
 from rest_framework.fields import ChoiceField, FileField, ReadOnlyField
+
+from drf_attachments.config import config
+from drf_attachments.models.models import Attachment
 
 __all__ = [
     "AttachmentSerializer",
     "AttachmentSubSerializer",
 ]
-
-from drf_attachments.models.models import Attachment, attachment_context_choices
-
-
-def get_content_object_field():
-    module_name, callable_name = settings.ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE.rsplit('.', maxsplit=1)
-    backend_module = importlib.import_module(module_name)
-    return getattr(backend_module, callable_name)()
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -25,14 +17,15 @@ class AttachmentSerializer(serializers.ModelSerializer):
     """
 
     file = FileField(write_only=True, required=True)
-    content_object = get_content_object_field()
-    context = ChoiceField(choices=attachment_context_choices(values_list=False))
+    content_object = config.get_content_object_field()
+    context = ChoiceField(choices=config.context_choices(values_list=False))
 
     class Meta:
         model = Attachment
         fields = (
             "pk",
             "url",
+            "download_url",
             "name",
             "context",
             "content_object",
@@ -48,7 +41,7 @@ class AttachmentSubSerializer(serializers.ModelSerializer):
     download_url = ReadOnlyField()
     name = ReadOnlyField()
     context = ChoiceField(
-        choices=attachment_context_choices(include_default=False, values_list=False),
+        choices=config.context_choices(include_default=False, values_list=False),
         read_only=True
     )
 

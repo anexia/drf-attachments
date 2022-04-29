@@ -2,7 +2,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.db.models.signals import post_migrate
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def create_global_permissions_for_app(sender, **kwargs):
@@ -12,7 +12,8 @@ def create_global_permissions_for_app(sender, **kwargs):
     for model_class in app.models.values():
         model_meta = model_class._meta
 
-        for permission in settings.GLOBAL_MODEL_PERMISSIONS:
+        global_permissions = getattr(settings, "GLOBAL_MODEL_PERMISSIONS", [])
+        for permission in global_permissions:
             if permission not in model_meta.default_permissions:
                 model_meta.default_permissions += (permission,)
 
