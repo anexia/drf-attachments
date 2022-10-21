@@ -1,7 +1,7 @@
 from django.contrib import admin
+from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 from drf_attachments.admin import AttachmentInlineAdmin
-from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 
 @admin.register(PhotoAlbum)

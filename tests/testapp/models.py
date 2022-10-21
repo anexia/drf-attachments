@@ -7,6 +7,7 @@ class PhotoAlbum(models.Model):
     """
     Photo album with any number of JPEG photos and PDF scans as attachments.
     """
+
     name = models.CharField(max_length=50, primary_key=True)
     attachments = AttachmentRelation()
 
@@ -19,6 +20,7 @@ class Thumbnail(models.Model):
     """
     Thumbnail collection with one JPEG image per context as attachments.
     """
+
     name = models.CharField(max_length=50, primary_key=True)
     attachments = AttachmentRelation()
 
@@ -32,6 +34,7 @@ class Diagram(models.Model):
     """
     Single diagram with an SVG file as attachment.
     """
+
     name = models.CharField(max_length=50, primary_key=True)
     attachments = AttachmentRelation()
 
@@ -45,6 +48,7 @@ class File(models.Model):
     """
     Single file in arbitrary format with constrained file size.
     """
+
     name = models.CharField(max_length=50, primary_key=True)
     attachments = AttachmentRelation()
 

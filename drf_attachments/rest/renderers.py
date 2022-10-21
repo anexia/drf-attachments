@@ -6,7 +6,7 @@ __all__ = [
 
 
 class FileDownloadRenderer(BaseRenderer):
-    """ Return data as download/attachment. """
+    """Return data as download/attachment."""
 
     media_type = "application/octet-stream"
     format = "binary"

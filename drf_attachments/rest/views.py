@@ -19,7 +19,7 @@ __all__ = [
 
 @parser_classes([MultiPartParser])
 class AttachmentViewSet(viewsets.ModelViewSet):
-    """ Manages any attachments according to their respective content_object. """
+    """Manages any attachments according to their respective content_object."""
 
     queryset = Attachment.objects.none()
     filter_backends = (
@@ -31,15 +31,19 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_serializer(self, *args, **kwargs):
-        many = kwargs.pop('many', isinstance(kwargs.get('data'), (list, tuple)))
+        many = kwargs.pop("many", isinstance(kwargs.get("data"), (list, tuple)))
         return super().get_serializer(*args, many=many, **kwargs)
 
     def get_queryset(self):
         return Attachment.objects.viewable()
 
-    @action(detail=True, methods=["GET"], renderer_classes=[JSONRenderer, FileDownloadRenderer])
+    @action(
+        detail=True,
+        methods=["GET"],
+        renderer_classes=[JSONRenderer, FileDownloadRenderer],
+    )
     def download(self, request, format=None, *args, **kwargs):
-        """ Downloads the uploaded attachment file. """
+        """Downloads the uploaded attachment file."""
         attachment = self.get_object()
         extension = attachment.get_extension()
 

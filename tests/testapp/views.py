@@ -1,7 +1,12 @@
 from rest_framework import viewsets
 
 from .models import Diagram, File, PhotoAlbum, Thumbnail
-from .serializers import DiagramSerializer, FileSerializer, PhotoAlbumSerializer, ThumbnailSerializer
+from .serializers import (
+    DiagramSerializer,
+    FileSerializer,
+    PhotoAlbumSerializer,
+    ThumbnailSerializer,
+)
 
 
 class PhotoAlbumViewSet(viewsets.ModelViewSet):

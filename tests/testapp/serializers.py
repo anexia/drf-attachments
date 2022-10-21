@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 from drf_attachments.rest.serializers import AttachmentSubSerializer
-from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 
 class PhotoAlbumSerializer(serializers.ModelSerializer):
@@ -9,7 +9,10 @@ class PhotoAlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PhotoAlbum
-        fields = ['name', 'attachments', ]
+        fields = [
+            "name",
+            "attachments",
+        ]
 
 
 class ThumbnailSerializer(serializers.ModelSerializer):
@@ -17,7 +20,10 @@ class ThumbnailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thumbnail
-        fields = ['name', 'attachments', ]
+        fields = [
+            "name",
+            "attachments",
+        ]
 
 
 class DiagramSerializer(serializers.ModelSerializer):
@@ -25,7 +31,10 @@ class DiagramSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diagram
-        fields = ['name', 'attachments', ]
+        fields = [
+            "name",
+            "attachments",
+        ]
 
 
 class FileSerializer(serializers.ModelSerializer):
@@ -33,4 +42,7 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = File
-        fields = ['name', 'attachments', ]
+        fields = [
+            "name",
+            "attachments",
+        ]

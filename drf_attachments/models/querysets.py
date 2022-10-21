@@ -10,7 +10,6 @@ __all__ = [
 
 
 class AttachmentQuerySet(QuerySet):
-
     def viewable(self, *args, **kwargs):
         callable_ = config.get_filter_callable_for_viewable_content_objects()
         return self.__filter_by_callable(callable_)
@@ -25,7 +24,7 @@ class AttachmentQuerySet(QuerySet):
 
     def delete(self):
         """Bulk remove files after related Attachments were deleted"""
-        files = list(self.values_list('file', flat=True))
+        files = list(self.values_list("file", flat=True))
         result = super().delete()
 
         # remove all files that belonged to the deleted attachments
