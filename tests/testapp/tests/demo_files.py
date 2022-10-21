@@ -18,7 +18,7 @@ class DemoFile:
 
     def __enter__(self):
         file_path = os.path.join(self.DIRECTORY, self.file_name)
-        self.file = open(file_path, 'rb')
+        self.file = open(file_path, "rb")
         if self.as_django_file:
             self.file = File(self.file)
         return self.file

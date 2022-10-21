@@ -32,7 +32,7 @@ class Config:
         if not setting:
             return None
 
-        module_name, callable_name = setting.rsplit('.', maxsplit=1)
+        module_name, callable_name = setting.rsplit(".", maxsplit=1)
         module = importlib.import_module(module_name)
         return getattr(module, callable_name)
 
@@ -51,7 +51,10 @@ class Config:
 
     @classmethod
     def context_choices(
-        cls, include_default=True, values_list=True, translated=True,
+        cls,
+        include_default=True,
+        values_list=True,
+        translated=True,
     ) -> Union[List[str], Tuple[Tuple[Any, Any]]]:
         """
         Extract all unique context definitions from settings "ATTACHMENT_CONTEXT_*" + "ATTACHMENT_DEFAULT_CONTEXT"
@@ -73,21 +76,16 @@ class Config:
     def get_contexts(cls, include_default) -> Set[str]:
         settings_keys = dir(settings)
         return {
-            getattr(settings, key) for key in settings_keys if cls.__is_context_setting(key, include_default)
+            getattr(settings, key)
+            for key in settings_keys
+            if cls.__is_context_setting(key, include_default)
         }
 
     @staticmethod
     def __is_context_setting(key, include_default) -> bool:
         return (
-            (
-                key.startswith("ATTACHMENT_CONTEXT_")
-                and not key.endswith("_CALLABLE")
-            )
-            or (
-                include_default
-                and key == DEFAULT_CONTEXT_SETTING
-            )
-        )
+            key.startswith("ATTACHMENT_CONTEXT_") and not key.endswith("_CALLABLE")
+        ) or (include_default and key == DEFAULT_CONTEXT_SETTING)
 
     @classmethod
     def translate_context(cls, context):

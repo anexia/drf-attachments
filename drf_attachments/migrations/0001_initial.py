@@ -12,36 +12,77 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Attachment',
+            name="Attachment",
             fields=[
-                ('id',
-                 models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True,
-                                  verbose_name='Attachment ID')),
-                ('name', models.CharField(blank=True, max_length=255, verbose_name='name')),
-                ('context',
-                 models.CharField(blank=True, help_text="Additional info about the attachment's context/meaning.",
-                                  max_length=255, verbose_name='context')),
-                ('meta', django.db.models.JSONField(
-                    help_text='Additional info about the attachment (e.g. file meta data: mime_type, extension, size).',
-                    verbose_name='meta')),
-                ('file',
-                 models.FileField(storage=storage.AttachmentFileStorage(), upload_to=storage.attachment_upload_path,
-                                  verbose_name='file')),
-                ('object_id', models.UUIDField()),
-                ('creation_date', models.DateTimeField(auto_now_add=True, verbose_name='Creation date')),
-                ('last_modification_date', models.DateTimeField(auto_now=True, verbose_name='Last modification date')),
-                ('content_type',
-                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                        verbose_name="Attachment ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(blank=True, max_length=255, verbose_name="name"),
+                ),
+                (
+                    "context",
+                    models.CharField(
+                        blank=True,
+                        help_text="Additional info about the attachment's context/meaning.",
+                        max_length=255,
+                        verbose_name="context",
+                    ),
+                ),
+                (
+                    "meta",
+                    django.db.models.JSONField(
+                        help_text="Additional info about the attachment (e.g. file meta data: mime_type, extension, size).",
+                        verbose_name="meta",
+                    ),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        storage=storage.AttachmentFileStorage(),
+                        upload_to=storage.attachment_upload_path,
+                        verbose_name="file",
+                    ),
+                ),
+                ("object_id", models.UUIDField()),
+                (
+                    "creation_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Creation date"
+                    ),
+                ),
+                (
+                    "last_modification_date",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last modification date"
+                    ),
+                ),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'attachment',
-                'verbose_name_plural': 'attachments',
-                'ordering': ('creation_date',),
+                "verbose_name": "attachment",
+                "verbose_name_plural": "attachments",
+                "ordering": ("creation_date",),
             },
         ),
     ]

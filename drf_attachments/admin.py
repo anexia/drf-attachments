@@ -64,7 +64,9 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
         app_label = entity._meta.app_label
         model_name = entity._meta.model_name
         try:
-            admin_url = reverse(f"admin:{app_label}_{model_name}_change", args=(entity.pk,))
+            admin_url = reverse(
+                f"admin:{app_label}_{model_name}_change", args=(entity.pk,)
+            )
             return mark_safe(f'<a href="{admin_url}">{entity}</a>')
         except NoReverseMatch:
             return entity

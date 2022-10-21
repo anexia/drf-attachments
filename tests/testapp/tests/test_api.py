@@ -3,15 +3,20 @@ import os
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
-
-from drf_attachments.models import Attachment
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
+)
 from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 from testapp.tests.demo_files import DemoFile
 
+from drf_attachments.models import Attachment
 
 # TODO: Test viewable/editable/deletable configuration
 # TODO: Test context translations
+
 
 class TestApi(TestCase):
     def setUp(self):
@@ -40,16 +45,20 @@ class TestApi(TestCase):
         )
 
         # GET all attachments
-        response = self.client.get(path=f'/api/attachment/')
+        response = self.client.get(path=f"/api/attachment/")
         self.assertEqual(HTTP_200_OK, response.status_code, response.content)
 
         # check response
         response_data = response.json()
         self.assertEqual(2, len(response_data))
         self.assertEqual("attach1", response_data[0]["name"])
-        self.assertEqual(settings.ATTACHMENT_CONTEXT_WORK_PHOTO, response_data[0]["context"])
+        self.assertEqual(
+            settings.ATTACHMENT_CONTEXT_WORK_PHOTO, response_data[0]["context"]
+        )
         self.assertEqual("attach2", response_data[1]["name"])
-        self.assertEqual(settings.ATTACHMENT_DEFAULT_CONTEXT, response_data[1]["context"])
+        self.assertEqual(
+            settings.ATTACHMENT_DEFAULT_CONTEXT, response_data[1]["context"]
+        )
 
     def test_get_attachments_of_entity(self):
         # prepare data
@@ -67,7 +76,7 @@ class TestApi(TestCase):
         )
 
         # GET all attachments of PhotoAlbum1
-        response = self.client.get(path=f'/api/photo_album/{self.photo_album.pk}/')
+        response = self.client.get(path=f"/api/photo_album/{self.photo_album.pk}/")
         self.assertEqual(HTTP_200_OK, response.status_code, response.content)
 
         # check response
@@ -88,12 +97,12 @@ class TestApi(TestCase):
         )
 
         # get attachment from main serializer
-        response = self.client.get(path=f'/api/attachment/')
+        response = self.client.get(path=f"/api/attachment/")
         attachment_response = response.json()[0]
         # TODO: download_url is not provided by main serializer. intentional?
 
         # get attachment from sub-serializer
-        response = self.client.get(path=f'/api/photo_album/{self.photo_album.pk}/')
+        response = self.client.get(path=f"/api/photo_album/{self.photo_album.pk}/")
         attachment_response = response.json()["attachments"][0]
         download_url = attachment_response["download_url"]
         self.assertIsNotNone(download_url)
@@ -105,7 +114,7 @@ class TestApi(TestCase):
         # check response
         self.assertEqual(
             f'attachment; filename="{attachment.name}{attachment.get_extension()}"',
-            response.get("Content-Disposition")
+            response.get("Content-Disposition"),
         )
 
         # check content
@@ -194,8 +203,13 @@ class TestApi(TestCase):
         # check attachment model
         attachments = Attachment.objects.all()
         self.assertEqual(2, attachments.count())
-        self.assertSetEqual({"My First Attachment", "My Second Attachment"}, {att.name for att in attachments})
-        self.assertSetEqual({self.photo_album.pk}, {att.object_id for att in attachments})
+        self.assertSetEqual(
+            {"My First Attachment", "My Second Attachment"},
+            {att.name for att in attachments},
+        )
+        self.assertSetEqual(
+            {self.photo_album.pk}, {att.object_id for att in attachments}
+        )
 
         # check photo album model
         photo_album_attachments = self.photo_album.attachments.all()
@@ -296,7 +310,9 @@ class TestApi(TestCase):
         # check attachment model
         attachments = Attachment.objects.all()
         self.assertEqual(2, attachments.count())
-        self.assertSetEqual({"Second Work Photo", "Vacation Photo"}, {att.name for att in attachments})
+        self.assertSetEqual(
+            {"Second Work Photo", "Vacation Photo"}, {att.name for att in attachments}
+        )
         self.assertSetEqual({self.thumbnail.pk}, {att.object_id for att in attachments})
 
         # check diagram model
@@ -380,10 +396,12 @@ class TestApi(TestCase):
         # check that the attachment was not created
         self.assertEqual(0, len(Attachment.objects.all()))
 
-    def upload_attachment(self, name: str, content_object_path: str, file_name: str, context: str):
+    def upload_attachment(
+        self, name: str, content_object_path: str, file_name: str, context: str
+    ):
         with DemoFile(file_name) as file:
             return self.client.post(
-                path=f'/api/attachment/',
+                path=f"/api/attachment/",
                 data={
                     "name": name,
                     "context": context,
@@ -393,7 +411,9 @@ class TestApi(TestCase):
             )
 
     @staticmethod
-    def create_attachment(name: str, context: str, content_object: object, file_name: str) -> Attachment:
+    def create_attachment(
+        name: str, context: str, content_object: object, file_name: str
+    ) -> Attachment:
         with DemoFile(file_name, as_django_file=True) as file:
             return Attachment.objects.create(
                 name=name,

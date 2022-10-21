@@ -1,5 +1,6 @@
-import magic
 import os
+
+import magic
 
 
 def get_mime_type(file):

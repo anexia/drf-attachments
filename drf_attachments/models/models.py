@@ -3,8 +3,16 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import CASCADE, CharField, DateTimeField, FileField, ForeignKey, Model, UUIDField
-from django.db.models import JSONField
+from django.db.models import (
+    CASCADE,
+    CharField,
+    DateTimeField,
+    FileField,
+    ForeignKey,
+    JSONField,
+    Model,
+    UUIDField,
+)
 from django.utils.translation import gettext_lazy as _
 from django_userforeignkey.request import get_current_request
 from rest_framework.exceptions import ValidationError
@@ -28,7 +36,7 @@ class Attachment(Model):
     objects = AttachmentManager()
 
     id = UUIDField(
-        _('Attachment ID'),
+        _("Attachment ID"),
         default=uuid.uuid4,
         editable=False,
         unique=True,
@@ -50,7 +58,9 @@ class Attachment(Model):
 
     meta = JSONField(
         _("meta"),
-        help_text=_("Additional info about the attachment (e.g. file meta data: mime_type, extension, size)."),
+        help_text=_(
+            "Additional info about the attachment (e.g. file meta data: mime_type, extension, size)."
+        ),
         blank=False,
         null=False,
     )
@@ -96,7 +106,11 @@ class Attachment(Model):
 
     @property
     def is_image(self):
-        return 'mime_type' in self.meta and self.meta['mime_type'] and self.meta['mime_type'].startswith("image")
+        return (
+            "mime_type" in self.meta
+            and self.meta["mime_type"]
+            and self.meta["mime_type"].startswith("image")
+        )
 
     @property
     def download_url(self):
@@ -126,13 +140,13 @@ class Attachment(Model):
         return self.creation_date != self.last_modification_date
 
     def get_extension(self):
-        return self.meta.get('extension')
+        return self.meta.get("extension")
 
     def get_size(self):
-        return self.meta.get('size')
+        return self.meta.get("size")
 
     def get_mime_type(self):
-        return self.meta.get('mime_type')
+        return self.meta.get("mime_type")
 
     def save(self, *args, **kwargs):
         # set computed values for direct and API access
@@ -152,8 +166,8 @@ class Attachment(Model):
         self.cleanup_file()  # remove the old file of a changed Attachment
 
     def set_default_context(self):
-        """ Set context to settings.ATTACHMENT_DEFAULT_CONTEXT (if defined) if it's still empty """
-        if not self.context and hasattr(settings, 'ATTACHMENT_DEFAULT_CONTEXT'):
+        """Set context to settings.ATTACHMENT_DEFAULT_CONTEXT (if defined) if it's still empty"""
+        if not self.context and hasattr(settings, "ATTACHMENT_DEFAULT_CONTEXT"):
             self.context = self.default_context
 
     def set_attachment_meta(self):
@@ -166,14 +180,16 @@ class Attachment(Model):
             int(settings.ATTACHMENT_MAX_UPLOAD_SIZE),
         )
         self.unique_upload = getattr(meta, "unique_upload", False)
-        self.unique_upload_per_context = getattr(meta, "unique_upload_per_context", False)
+        self.unique_upload_per_context = getattr(
+            meta, "unique_upload_per_context", False
+        )
 
     def set_file_meta(self):
         if self.meta is None:
             self.meta = {}
-        self.meta['mime_type'] = get_mime_type(self.file)
-        self.meta['extension'] = get_extension(self.file)
-        self.meta['size'] = self.file.size
+        self.meta["mime_type"] = get_mime_type(self.file)
+        self.meta["extension"] = get_extension(self.file)
+        self.meta["size"] = self.file.size
 
     def validate_context(self):
         """
@@ -206,11 +222,14 @@ class Attachment(Model):
         Validate the mime_type against the AttachmentMeta.valid_mime_types defined in the content_object's model class.
         Raise a ValidationError on failure.
         """
-        if self.valid_mime_types and self.meta['mime_type'] not in self.valid_mime_types:
+        if (
+            self.valid_mime_types
+            and self.meta["mime_type"] not in self.valid_mime_types
+        ):
             error_msg = _(
                 "Invalid mime type {mime_type} detected! It must be one of the following: {valid_mime_types}"
             ).format(
-                mime_type=self.meta['mime_type'],
+                mime_type=self.meta["mime_type"],
                 valid_mime_types=", ".join(self.valid_mime_types),
             )
             raise ValidationError(
@@ -225,11 +244,14 @@ class Attachment(Model):
         Validate the extension against the AttachmentMeta.valid_extensions defined in the content_object's model class.
         Raise a ValidationError on failure.
         """
-        if self.valid_extensions and self.meta['extension'] not in self.valid_extensions:
+        if (
+            self.valid_extensions
+            and self.meta["extension"] not in self.valid_extensions
+        ):
             error_msg = _(
                 "Invalid extension {extension} detected! It must be one of the following: {valid_extensions}"
             ).format(
-                extension=self.meta['extension'],
+                extension=self.meta["extension"],
                 valid_extensions=", ".join(self.valid_extensions),
             )
             raise ValidationError(
@@ -247,7 +269,9 @@ class Attachment(Model):
         Validate the extension and raise a ValidationError on failure.
         """
         if self.min_size and self.file.size < self.min_size:
-            error_msg = _("File size {size} too small! It must be at least {min_size}").format(
+            error_msg = _(
+                "File size {size} too small! It must be at least {min_size}"
+            ).format(
                 size=self.file.size,
                 min_size=self.min_size,
             )
@@ -260,7 +284,9 @@ class Attachment(Model):
 
         # self.max_size is always given (settings.ATTACHMENT_MAX_UPLOAD_SIZE by default and as maximum)
         if self.file.size > self.max_size:
-            error_msg = _("File size {size} too large! It can only be {max_size}").format(
+            error_msg = _(
+                "File size {size} too large! It can only be {max_size}"
+            ).format(
                 size=self.file.size,
                 max_size=self.max_size,
             )

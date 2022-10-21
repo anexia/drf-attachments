@@ -7,32 +7,43 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Diagram',
+            name="Diagram",
             fields=[
-                ('name', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(max_length=50, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='File',
+            name="File",
             fields=[
-                ('name', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(max_length=50, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PhotoAlbum',
+            name="PhotoAlbum",
             fields=[
-                ('name', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(max_length=50, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Thumbnail',
+            name="Thumbnail",
             fields=[
-                ('name', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(max_length=50, primary_key=True, serialize=False),
+                ),
             ],
         ),
     ]

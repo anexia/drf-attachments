@@ -3,6 +3,11 @@
 
 # Development dependencies
 
+# Linters and formatters
+pre-commit>=2.20,<2.21
+isort>=5.10,<5.11
+black>=22.6.0,<22.7
+
 # TestApp dependencies
 django>=3.2,<4
 djangorestframework>=3.13,<4

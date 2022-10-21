@@ -35,14 +35,14 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSubSerializer(serializers.ModelSerializer):
-    """ Sub serializer for nested data inside other serializers """
+    """Sub serializer for nested data inside other serializers"""
 
     # pk is read-only by default
     download_url = ReadOnlyField()
     name = ReadOnlyField()
     context = ChoiceField(
         choices=config.context_choices(include_default=False, values_list=False),
-        read_only=True
+        read_only=True,
     )
 
     class Meta:
