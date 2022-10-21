@@ -10,7 +10,7 @@ If used with DRF, `django-filter` is an additional requirement.
 1. Install using pip:
 
 ```shell
-pip install git+https://github.com/anexia-it/drf-attachments@main
+pip install git+https://github.com/anexia/drf-attachments@main
 ```
 
 2. Integrate `drf_attachments` and `django_userforeignkey` into your `settings.py`
@@ -282,6 +282,26 @@ python manage.py runserver
 # The app should now be served on http://localhost:8000
 # Browsable API: http://localhost:8000/api
 # Admin Panel: http://localhost:8000/admin
+```
+
+## Unit Tests
+
+See folder [tests/](tests/). Basically, all endpoints are covered with multiple
+unit tests.
+
+Follow below instructions to run the tests.
+You may exchange the installed Django and DRF versions according to your requirements. 
+:warning: Depending on your local environment settings you might need to explicitly call `python3` instead of `python`.
+```bash
+# install dependencies
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# setup environment
+pip install -e .
+
+# run tests
+cd tests && python manage.py test
 ```
 
 ## ToDos

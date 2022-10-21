@@ -17,7 +17,7 @@ setup(
     description='A django module to manage any model\'s file up-/downloads by relating an Attachment model to it.',
     long_description=README,
     long_description_content_type='text/markdown',
-    url='https://github.com/anexia-it/drf-attachments',
+    url='https://github.com/anexia/drf-attachments',
     author='Alexandra Bruckner',
     author_email='abruckner@anexia-it.com',
     install_requires=[

@@ -4,10 +4,12 @@
 # Development dependencies
 
 # TestApp dependencies
-
 django>=3.2,<4
 djangorestframework>=3.13,<4
 python-magic>=0.4.18
 rest-framework-generic-relations>=2.0.0
 django-userforeignkey>=0.4
 django-filter>=21.1,<22
+
+# fix importlib version to avoid "AttributeError: 'EntryPoints' object has no attribute 'get'" with flake8
+importlib-metadata<5.0

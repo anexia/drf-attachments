@@ -1,6 +1,6 @@
 """
 Django settings for "tests" project which assures the functionality of the "drf-attachments" package
-(https://github.com/anexia-it/drf-attachments).
+(https://github.com/anexia/drf-attachments).
 """
 
 import os
