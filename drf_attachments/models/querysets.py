@@ -34,6 +34,13 @@ class AttachmentQuerySet(QuerySet):
 
         return result
 
+    def get_names_list(self):
+        """
+        Return the names of all files within the queryset as list
+        """
+        names = list(self.values_list("name", flat=True))
+        return ", ".join(names)
+
     def __filter_by_callable(self, callable_) -> QuerySet:
         if callable_:
             return callable_(self)

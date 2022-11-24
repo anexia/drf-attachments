@@ -4,6 +4,7 @@ from uuid import uuid1
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
+from rest_framework.reverse import reverse
 
 __all__ = [
     "AttachmentFileStorage",
@@ -27,7 +28,14 @@ class AttachmentFileStorage(FileSystemStorage):
         if not attachment:
             return ""
 
-        return attachment.download_url
+        return reverse("attachment-download", kwargs={"pk": attachment.id})
+
+
+def attachment_upload_root_dir():
+    """
+    Extract ATTACHMENT_UPLOAD_ROOT_DIR from the settings (if defined)
+    """
+    return getattr(settings, "ATTACHMENT_UPLOAD_ROOT_DIR", "attachments")
 
 
 def attachment_upload_path(attachment, filename):
@@ -44,4 +52,4 @@ def attachment_upload_path(attachment, filename):
     """
     filename, file_extension = os.path.splitext(filename)
     month_directory = timezone.now().strftime("%Y%m")
-    return f"attachments/{month_directory}/{str(uuid1())}{file_extension}"
+    return f"{attachment_upload_root_dir()}/{month_directory}/{str(uuid1())}{file_extension}"
