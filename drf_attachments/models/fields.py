@@ -1,7 +1,6 @@
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db.models import FileField
-from django.conf import settings
-
 
 __all__ = [
     "AttachmentRelation",
@@ -19,8 +18,6 @@ class AttachmentRelation(GenericRelation):
 class DynamicStorageFileField(FileField):
     def pre_save(self, model_instance, add):
         meta = getattr(model_instance.content_object, "AttachmentMeta", None)
-        storage_location = getattr(meta, "storage_location", None)
-        if storage_location is None:
-            storage_location = settings.PRIVATE_ROOT
+        storage_location = getattr(meta, "storage_location", settings.PRIVATE_ROOT)
         self.storage.location = storage_location
         return super().pre_save(model_instance, add)
