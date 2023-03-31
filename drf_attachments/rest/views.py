@@ -37,6 +37,15 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Attachment.objects.viewable()
 
+    def get_storage_path(self):
+        attachment = self.get_object()
+        meta = getattr(attachment.content_object, "AttachmentMeta", None)
+        storage_location = getattr(meta, "storage_location", None)
+        if storage_location:
+            return f"{storage_location}/{attachment.file.name}"
+        else:
+            return attachment.file.path
+
     @action(
         detail=True,
         methods=["GET"],
@@ -46,6 +55,7 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         """Downloads the uploaded attachment file."""
         attachment = self.get_object()
         extension = attachment.get_extension()
+        storage_path = self.get_storage_path()
 
         if attachment.name:
             download_file_name = f"{attachment.name}{extension}"
@@ -53,7 +63,7 @@ class AttachmentViewSet(viewsets.ModelViewSet):
             download_file_name = f"attachment_{attachment.pk}{extension}"
 
         return FileResponse(
-            open(attachment.file.path, "rb"),
+            open(storage_path, "rb"),
             as_attachment=True,
             filename=download_file_name,
         )

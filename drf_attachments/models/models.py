@@ -19,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.reverse import reverse
 
 from drf_attachments.config import config
+from drf_attachments.models.fields import DynamicStorageFileField
 from drf_attachments.models.managers import AttachmentManager
 from drf_attachments.storage import AttachmentFileStorage, attachment_upload_path
 from drf_attachments.utils import get_extension, get_mime_type, remove_file
@@ -65,7 +66,7 @@ class Attachment(Model):
         null=False,
     )
 
-    file = FileField(
+    file = DynamicStorageFileField(
         verbose_name=_("file"),
         upload_to=attachment_upload_path,  # DO NOT CHANGE UPLOAD METHOD NAME (keep migrations sane)
         storage=AttachmentFileStorage(),
