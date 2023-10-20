@@ -10,7 +10,7 @@ If used with DRF, `django-filter` is an additional requirement.
 1. Install using pip:
 
 ```shell
-pip install git+https://github.com/anexia/drf-attachments@main
+pip install drf-attachments
 ```
 
 2. Integrate `drf_attachments` into your `settings.py`
@@ -321,12 +321,8 @@ cd tests && python manage.py test
 
 * Simplify configuration (maybe a default configuration class that can be subclasses for customizations?)
 * Remove settings.GLOBAL_MODEL_PERMISSIONS handling (not really related to attachments)?
-* Provide default Storage but support custom Storage class
-  * => automatically correct file link in admin panel instead of custom "Download" link
 * Make context optional or remove default context (currently a context is required by `ChoiceField` in the serializer)
-* Remove dependency on `django_userforeignkey`
-* Integrate black + isort via pre-commit
+* Integrate pre-commit in github actions
 * Remove dot from `valid_extensions` definition / make optional
 * Change `Attachment.get_*` methods to dynamic properties
-* Split into a separate Django and DRF package 
 * Allow different attachment configurations per model (e.g. MyModel.photos and MyModel.docs with different constraints)
