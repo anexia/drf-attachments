@@ -10,6 +10,8 @@ __all__ = [
     "attachment_upload_path",
 ]
 
+from drf_attachments.utils import get_admin_attachment_url
+
 
 class AttachmentFileStorage(FileSystemStorage):
     """
@@ -27,7 +29,7 @@ class AttachmentFileStorage(FileSystemStorage):
         if not attachment:
             return ""
 
-        return attachment.download_url
+        return get_admin_attachment_url(attachment.pk)
 
 
 def attachment_upload_path(attachment, filename):

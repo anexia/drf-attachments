@@ -3,6 +3,8 @@ from rest_framework.fields import ChoiceField, FileField, ReadOnlyField
 
 from drf_attachments.config import config
 from drf_attachments.models.models import Attachment
+from drf_attachments.rest.fields import DownloadURLField
+
 
 __all__ = [
     "AttachmentSerializer",
@@ -19,6 +21,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     file = FileField(write_only=True, required=True)
     content_object = config.get_content_object_field()
     context = ChoiceField(choices=config.context_choices(values_list=False))
+    download_url = DownloadURLField()
 
     class Meta:
         model = Attachment
@@ -33,12 +36,11 @@ class AttachmentSerializer(serializers.ModelSerializer):
             "file",
         )
 
-
 class AttachmentSubSerializer(serializers.ModelSerializer):
     """Sub serializer for nested data inside other serializers"""
 
     # pk is read-only by default
-    download_url = ReadOnlyField()
+    download_url = DownloadURLField()
     name = ReadOnlyField()
     context = ChoiceField(
         choices=config.context_choices(include_default=False, values_list=False),
