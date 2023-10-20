@@ -10,7 +10,13 @@ If used with DRF, `django-filter` is an additional requirement.
 1. Install using pip:
 
 ```shell
-pip install git+https://github.com/anexia/drf-attachments@main
+pip install git+https://github.com/anexia/drf-attachments@main[drf]
+```
+
+or to install without DRF dependencies (no REST endpoints available from scratch)
+
+```
+pip install git+https://github.com/anexia-it/drf-attachments@main
 ```
 
 2. Integrate `drf_attachments` and `django_userforeignkey` into your `settings.py`
@@ -67,6 +73,12 @@ class PhotoAlbumAdmin(admin.ModelAdmin):
     inlines = [
         AttachmentInlineAdmin,
     ]
+```
+
+4. Optionally define a custom DIR as root for your attachments ("attachments" by default)
+```python
+# settings.py
+ATTACHMENT_UPLOAD_ROOT_DIR = "your/custom/attachments/root/"
 ```
 
 `ReadOnlyAttachmentInlineAdmin` is useful when attachments should be provided only by REST API. You may consider
