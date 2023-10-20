@@ -13,19 +13,13 @@ If used with DRF, `django-filter` is an additional requirement.
 pip install git+https://github.com/anexia/drf-attachments@main
 ```
 
-2. Integrate `drf_attachments` and `django_userforeignkey` into your `settings.py`
+2. Integrate `drf_attachments` into your `settings.py`
 
 ```python
 INSTALLED_APPS = [
     # ...
-    'django_userforeignkey',
     'drf_attachments',
     # ...
-]
-
-MIDDLEWARE = [
-   # ...
-   'django_userforeignkey.middleware.UserForeignKeyMiddleware',
 ]
 ```
 

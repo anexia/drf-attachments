@@ -1,6 +1,7 @@
 import os
 
 import magic
+from django.urls import reverse
 
 
 def get_mime_type(file):
@@ -30,3 +31,15 @@ def remove_file(file_path, raise_exceptions=False):
             # forward the thrown exception
             raise
         # just continue if deletion of old file was not possible and no exceptions should be raised
+
+
+def get_api_attachment_url(attachment_pk):
+    return reverse("attachment-download", kwargs={"pk": attachment_pk})
+
+def get_admin_attachment_url(attachment_pk):
+    return reverse(
+        "admin:drf_attachments_attachment_download",
+        kwargs={
+            "object_id": attachment_pk
+        }
+    )
