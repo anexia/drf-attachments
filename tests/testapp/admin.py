@@ -1,7 +1,7 @@
 from django.contrib import admin
-from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
+from testapp.models import Diagram, File, PhotoAlbum, Profile, Thumbnail
 
-from drf_attachments.admin import AttachmentInlineAdmin
+from drf_attachments.admin import AttachmentInlineAdmin, RequiredAttachmentInlineAdmin
 
 
 @admin.register(PhotoAlbum)
@@ -33,4 +33,12 @@ class FileAdmin(admin.ModelAdmin):
     list_display = ("name",)
     inlines = [
         AttachmentInlineAdmin,
+    ]
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    inlines = [
+        RequiredAttachmentInlineAdmin,
     ]

@@ -56,3 +56,17 @@ class File(models.Model):
         unique_upload = True
         min_size = 1_000  # Bytes
         max_size = 10_000  # Bytes
+
+
+class Profile(models.Model):
+    """
+    User profile with one avatar image as attachment.
+    """
+
+    name = models.CharField(max_length=50, primary_key=True)
+    attachments = AttachmentRelation()
+
+    class AttachmentMeta:
+        valid_mime_types = ["image/jpeg"]
+        valid_extensions = [".jpg", ".jpeg"]
+        unique_upload = True
