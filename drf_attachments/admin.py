@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.forms import ChoiceField, ModelForm
 from django.http import StreamingHttpResponse
-from django.urls import NoReverseMatch, reverse, path
+from django.urls import NoReverseMatch, path, reverse
 from django.utils.safestring import mark_safe
 
 from drf_attachments.config import config
@@ -13,6 +13,7 @@ from drf_attachments.models.models import Attachment
 
 __all__ = [
     "AttachmentInlineAdmin",
+    "RequiredAttachmentInlineAdmin",
 ]
 
 
@@ -45,6 +46,7 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
     fields = (
         "name",
         "context",
+        "meta",
         "content_type",
         "object_id",
         "content_object",
@@ -81,7 +83,7 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
             path(
                 "<path:object_id>/download/",
                 self.admin_site.admin_view(self.download_view),
-                name="drf_attachments_attachment_download"
+                name="drf_attachments_attachment_download",
             ),
         ]
         return custom_urls + urls
@@ -93,7 +95,8 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
             content_type=attachment.get_mime_type(),
         )
         response["Content-Disposition"] = rfc5987_content_disposition(
-            (attachment.name if attachment.name else str(attachment.pk)) + attachment.get_extension()
+            (attachment.name if attachment.name else str(attachment.pk))
+            + attachment.get_extension()
         )
 
         return response
@@ -132,3 +135,7 @@ class ReadOnlyAttachmentInlineAdmin(AttachmentInlineAdmin):
         return False
 
     show_change_link = False
+
+
+class RequiredAttachmentInlineAdmin(AttachmentInlineAdmin):
+    min_num = 1
