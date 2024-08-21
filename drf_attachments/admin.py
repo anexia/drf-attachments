@@ -67,15 +67,20 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
     @staticmethod
     def content_object(obj):
         entity = obj.content_object
-        app_label = entity._meta.app_label
-        model_name = entity._meta.model_name
-        try:
-            admin_url = reverse(
-                f"admin:{app_label}_{model_name}_change", args=(entity.pk,)
-            )
-            return mark_safe(f'<a href="{admin_url}">{entity}</a>')
-        except NoReverseMatch:
-            return entity
+
+        if entity:
+            app_label = entity._meta.app_label
+            model_name = entity._meta.model_name
+
+            try:
+                admin_url = reverse(
+                    f"admin:{app_label}_{model_name}_change", args=(entity.pk,)
+                )
+                return mark_safe(f'<a href="{admin_url}">{entity}</a>')
+            except NoReverseMatch:
+                return entity
+
+        return "not found (change object_id or content_type)"
 
     def get_urls(self):
         urls = super().get_urls()
