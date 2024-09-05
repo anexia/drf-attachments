@@ -64,6 +64,16 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
         "creation_date",
     )
 
+    def get_object(self, request, object_id, from_field=None):
+        obj = super().get_object(request, object_id, from_field)
+
+        # handling missing file (e.g. file may have been deleted on the server)
+        if not obj.file.storage.exists(obj.file.name):
+            self.message_user(request, "File not found", level="ERROR")
+            obj.file = None
+
+        return obj
+
     @staticmethod
     def content_object(obj):
         entity = obj.content_object
