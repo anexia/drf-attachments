@@ -104,11 +104,7 @@ class Attachment(Model):
 
     @property
     def is_image(self):
-        return (
-            "mime_type" in self.meta
-            and self.meta["mime_type"]
-            and self.meta["mime_type"].startswith("image")
-        )
+        return self.get_mime_type().startswith("image")
 
     @property
     def default_context(self):
@@ -126,13 +122,13 @@ class Attachment(Model):
         return self.creation_date != self.last_modification_date
 
     def get_extension(self):
-        return self.meta.get("extension")
+        return self.meta.get("extension", "unkown")
 
     def get_size(self):
-        return self.meta.get("size")
+        return self.meta.get("size", 0)
 
     def get_mime_type(self):
-        return self.meta.get("mime_type")
+        return self.meta.get("mime_type", "unkown")
 
     def save(self, *args, **kwargs):
         # set computed values for direct and API access

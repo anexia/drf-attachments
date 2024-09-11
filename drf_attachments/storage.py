@@ -19,8 +19,9 @@ class AttachmentFileStorage(FileSystemStorage):
     Attachments are served with a dedicated API route instead
     """
 
-    def __init__(self):
-        super().__init__(location=settings.PRIVATE_ROOT)
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("location", settings.PRIVATE_ROOT)
+        super().__init__(*args, **kwargs)
 
     def url(self, name):
         from drf_attachments.models import Attachment

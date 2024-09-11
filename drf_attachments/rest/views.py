@@ -1,5 +1,9 @@
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_attachments.storage import AttachmentFileStorage
+from drf_attachments.models.models import Attachment
+from drf_attachments.rest.renderers import FileDownloadRenderer
+from drf_attachments.rest.serializers import AttachmentSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action, parser_classes
 from rest_framework.filters import SearchFilter
@@ -7,10 +11,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
-
-from drf_attachments.models.models import Attachment
-from drf_attachments.rest.renderers import FileDownloadRenderer
-from drf_attachments.rest.serializers import AttachmentSerializer
 
 __all__ = [
     "AttachmentViewSet",
@@ -41,10 +41,16 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         attachment = self.get_object()
         meta = getattr(attachment.content_object, "AttachmentMeta", None)
         storage_location = getattr(meta, "storage_location", None)
-        if storage_location:
-            return f"{storage_location}/{attachment.file.name}"
+
+        # Get custom storage location
+        if meta and storage_location:
+            storage = AttachmentFileStorage(location=meta.storage_location)
         else:
-            return attachment.file.path
+            # Default storage value from FileField "file"
+            storage = attachment.file.storage
+
+        # Return the file path using the appropriate storage system
+        return storage.path(attachment.file.name)
 
     @action(
         detail=True,
@@ -61,6 +67,11 @@ class AttachmentViewSet(viewsets.ModelViewSet):
             download_file_name = f"{attachment.name}{extension}"
         else:
             download_file_name = f"attachment_{attachment.pk}{extension}"
+
+        # Check if file exists via storage due to custom storage locations
+        # without triggering SuspiciousFileOperation
+        if not attachment.file.storage.exists(attachment.file.name):
+            raise Http404()
 
         return FileResponse(
             open(storage_path, "rb"),
