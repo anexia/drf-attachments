@@ -145,7 +145,6 @@ class Attachment(Model):
         self.set_default_context()  # set the default context if yet empty (and if default is defined)
         self.validate_file()  # validate the file and its mime_type, extension and size
         self.manage_uniqueness()  # remove any other Attachments for content_objects with
-        self.cleanup_file()  # remove the old file of a changed Attachment
 
     def set_default_context(self):
         """Set context to settings.ATTACHMENT_DEFAULT_CONTEXT (if defined) if it's still empty"""
@@ -313,20 +312,3 @@ class Attachment(Model):
                 remove_file(attachment.file.path)
 
             to_delete.delete()
-
-    def cleanup_file(self):
-        """
-        If an Attachment is updated and receives a new file, remove the previous file from the storage
-        """
-        if self.pk:
-            try:
-                # on update delete the old file if a new one was inserted
-                # (delete_orphan only removes image on deletion of the whole attachment instance)
-                old_instance = Attachment.objects.get(pk=self.pk)
-
-                # on update delete the old file if a new one was inserted
-                if old_instance.file != self.file:
-                    remove_file(old_instance.file.path)
-            except Attachment.DoesNotExist:
-                # Do nothing if Attachment does not yet exist in DB
-                pass
