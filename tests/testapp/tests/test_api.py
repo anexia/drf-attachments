@@ -230,6 +230,7 @@ class TestApi(TestCase):
         self.assertEqual(1, attachments.count())
         attachment = attachments[0]
         first_attachment_file_path = attachment.file.path
+        self.assertTrue(os.path.isfile(first_attachment_file_path))
 
         # check diagram model
         diagram_attachments = self.diagram.attachments.all()
@@ -327,13 +328,17 @@ class TestApi(TestCase):
             content_object=self.file,
             file_name=DemoFile.PDF,
         )
+        attachment = Attachment.objects.first()
+        attachment_file_path = attachment.file.path
+        self.assertTrue(os.path.isfile(attachment_file_path))
 
         # delete the File model
         response = self.client.delete(f"/api/file/{self.file.pk}/")
         self.assertEqual(HTTP_204_NO_CONTENT, response.status_code, response.content)
 
-        # check that the attachment was deleted as well
+        # check that the attachment and its file were deleted as well
         self.assertEqual(0, len(Attachment.objects.all()))
+        self.assertFalse(os.path.isfile(attachment_file_path))
 
     def test_physical_file_is_deleted_with_content_object(self):
         # add an attachment to File model

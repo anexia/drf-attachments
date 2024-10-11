@@ -36,6 +36,7 @@ def remove_file(file_path, raise_exceptions=False):
 def get_api_attachment_url(attachment_pk):
     return reverse("attachment-download", kwargs={"pk": attachment_pk})
 
+
 def get_admin_attachment_url(attachment_pk):
     return reverse(
         "admin:drf_attachments_attachment_download",
