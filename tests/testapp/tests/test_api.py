@@ -98,18 +98,19 @@ class TestApi(TestCase):
 
         # get attachment from main serializer
         response = self.client.get(path=f"/api/attachment/")
-        attachment_response = response.json()[0]
-        # TODO: download_url is not provided by main serializer. intentional?
+        main_attachment_response = response.json()[0]
+        main_download_url = main_attachment_response["download_url"]
+        self.assertIsNotNone(main_download_url)
+        self.assertGreater(len(main_download_url), 0)
 
         # get attachment from sub-serializer
         response = self.client.get(path=f"/api/photo_album/{self.photo_album.pk}/")
-        attachment_response = response.json()["attachments"][0]
-        download_url = attachment_response["download_url"]
-        self.assertIsNotNone(download_url)
-        self.assertGreater(len(download_url), 0)
+        sub_attachment_response = response.json()["attachments"][0]
+        sub_download_url = sub_attachment_response["download_url"]
+        self.assertEqual(main_download_url, sub_download_url)
 
         # download
-        response = self.client.get(download_url)
+        response = self.client.get(sub_download_url)
 
         # check response
         self.assertEqual(

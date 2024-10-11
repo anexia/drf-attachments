@@ -1,0 +1,4 @@
+# load base requirements
+-r requirements.txt
+
+rest-framework-generic-relations>=2.0.0

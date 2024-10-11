@@ -10,6 +10,12 @@ If used with DRF, `django-filter` is an additional requirement.
 1. Install using pip:
 
 ```shell
+pip install drf-attachments[drf]
+```
+
+or to install without DRF dependencies (no REST endpoints available from scratch)
+
+```shell
 pip install drf-attachments
 ```
 
@@ -138,6 +144,12 @@ def attachment_context_translations():
         settings.ATTACHMENT_CONTEXT_OTHER: _("Other"),
         settings.ATTACHMENT_DEFAULT_CONTEXT: _("Attachment"),
     }
+```
+
+4. Optionally define a custom DIR as root for your attachments ("attachments" by default)
+```python
+# settings.py
+ATTACHMENT_UPLOAD_ROOT_DIR = "your/custom/attachments/root/"
 ```
 
 ## Usage

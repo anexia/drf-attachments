@@ -22,7 +22,6 @@ setup(
     author_email="abruckner@anexia-it.com",
     install_requires=[
         "python-magic>=0.4.18",
-        "rest-framework-generic-relations>=2.0.0",
         "content-disposition>=1.1.0",
     ],
     classifiers=[
@@ -39,4 +38,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
+    extras_require={
+        "drf": ["rest-framework-generic-relations>=2.0.0"],
+    },
 )

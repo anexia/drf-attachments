@@ -13,7 +13,7 @@ from django.db.models import (
     UUIDField,
 )
 from django.utils.translation import gettext_lazy as _
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 from drf_attachments.config import config
 from drf_attachments.models.fields import DynamicStorageFileField
@@ -98,6 +98,16 @@ class Attachment(Model):
         verbose_name = _("attachment")
         verbose_name_plural = _("attachments")
         ordering = ("creation_date",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            # if DRF is installed, use their ValidationError
+            from rest_framework.exceptions import ValidationError as DrfValidationError
+            self.validation_error_class = DrfValidationError
+        except ImportError:
+            # otherwise use default django ValidationError
+            self.validation_error_class = ValidationError
 
     def __str__(self):
         return f"{self.content_type} | {self.object_id} | {self.context_label} | {self.name}"
@@ -184,12 +194,7 @@ class Attachment(Model):
                 context=self.context,
                 valid_contexts=", ".join(self.valid_contexts),
             )
-            raise ValidationError(
-                {
-                    "context": error_msg,
-                },
-                code="invalid",
-            )
+            raise self.validation_error_class(error_msg, code="invalid")
 
     def validate_file(self):
         """
@@ -214,7 +219,7 @@ class Attachment(Model):
                 mime_type=self.meta["mime_type"],
                 valid_mime_types=", ".join(self.valid_mime_types),
             )
-            raise ValidationError(
+            raise self.validation_error_class(
                 {
                     "file": error_msg,
                 },
@@ -236,7 +241,7 @@ class Attachment(Model):
                 extension=self.meta["extension"],
                 valid_extensions=", ".join(self.valid_extensions),
             )
-            raise ValidationError(
+            raise self.validation_error_class(
                 {
                     "file": error_msg,
                 },
@@ -257,7 +262,7 @@ class Attachment(Model):
                 size=self.file.size,
                 min_size=self.min_size,
             )
-            raise ValidationError(
+            raise self.validation_error_class(
                 {
                     "file": error_msg,
                 },
@@ -272,7 +277,7 @@ class Attachment(Model):
                 size=self.file.size,
                 max_size=self.max_size,
             )
-            raise ValidationError(
+            raise self.validation_error_class(
                 {
                     "file": error_msg,
                 },
