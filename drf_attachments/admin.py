@@ -1,9 +1,9 @@
 from content_disposition import rfc5987_content_disposition
 from django.contrib import admin
-from django.contrib.admin import AdminSite
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.admin import GenericTabularInline
+from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.forms import ChoiceField, ModelForm
+from django.forms.utils import ErrorList
 from django.http import StreamingHttpResponse
 from django.urls import NoReverseMatch, path, reverse
 from django.utils.safestring import mark_safe
@@ -117,6 +117,62 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
         return response
 
 
+class DynamicallyDisabledAttachmentInlineForm(AttachmentForm):
+    class Meta:
+        model = Attachment
+        fields = "__all__"
+
+    def disable_inline_fields(self):
+        """
+        Override to return True/False when custom condition is met
+        and change field readonly status in inline admin list on True
+        """
+        raise NotImplementedError()
+
+    def __init__(
+        self,
+        data=None,
+        files=None,
+        auto_id="id_%s",
+        prefix=None,
+        initial=None,
+        error_class=ErrorList,
+        label_suffix=None,
+        empty_permitted=False,
+        instance=None,
+        use_required_attribute=None,
+        renderer=None,
+    ):
+        super().__init__(
+            data,
+            files,
+            auto_id,
+            prefix,
+            initial,
+            error_class,
+            label_suffix,
+            empty_permitted,
+            instance,
+            use_required_attribute,
+            renderer,
+        )
+
+        # make all fields of the inline attachment read only
+        if self.disable_inline_fields():
+            for field in self.fields:
+                self.fields[field].disabled = True
+
+
+class DynamicallyDisabledAttachmentInlineFormSet(BaseGenericInlineFormSet):
+    def add_fields(self, form, index):
+        """
+        Disables the DELETE checkbox of disabled inline entries.
+        """
+        super().add_fields(form, index)
+        if hasattr(form, 'disable_inline_fields') and form.disable_inline_fields():
+            form.fields['DELETE'].disabled = True
+
+
 class BaseAttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):
     model = Attachment
     form = AttachmentForm
@@ -129,12 +185,14 @@ class BaseAttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):
         "mime_type",
         "extension",
         "creation_date",
+        "last_modification_date",
     )
     readonly_fields = (
         "size",
         "mime_type",
         "extension",
         "creation_date",
+        "last_modification_date",
     )
 
 

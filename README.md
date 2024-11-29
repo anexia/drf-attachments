@@ -66,6 +66,34 @@ class PhotoAlbumAdmin(admin.ModelAdmin):
 `ReadOnlyAttachmentInlineAdmin` is useful when attachments should be provided only by REST API. You may consider
 extending the classes in order to handle additional permission checks.
 
+The package provides a custom `DynamicallyDisabledAttachmentInlineForm` that allows disablement (setting readonly) of
+single attachments depending on its `disable_inline_fields` method. Override it to define your own logic to decide when 
+an inline attachment should not be editable.
+In addition to that a custom `DynamicallyDisabledAttachmentInlineFormSet` class can also disable the DELETE checkbox 
+of single attachments.
+
+Example usage:
+```
+# customize the DynamicallyDisabledAttachmentInlineForm to determine which inline attachments should be readonly
+MyCustomDynamicallyDisabledAttachmentInlineForm(DynamicallyDisabledAttachmentInlineForm):
+    def disable_inline_fields(self):
+        """
+        Attachments with context IMMUTABLE should be disabled / readonly
+        """
+        return self.instance and self.instance.context == "IMMUTABLE" 
+
+
+class MyCustomDynamicallyDisabledAttachmentInlineAdmin(AttachmentInlineAdmin):
+    form = MyCustomDynamicallyDisabledAttachmentInlineForm
+    formset = DynamicallyDisabledAttachmentInlineFormSet
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    show_change_link = False
+```
+
+
 ## Usage with DRF (ToDo: API needs to be simplified)
 
 
