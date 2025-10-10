@@ -61,15 +61,11 @@ class Migration(migrations.Migration):
                 ("object_id", models.UUIDField()),
                 (
                     "creation_date",
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name="Creation date"
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Creation date"),
                 ),
                 (
                     "last_modification_date",
-                    models.DateTimeField(
-                        auto_now=True, verbose_name="Last modification date"
-                    ),
+                    models.DateTimeField(auto_now=True, verbose_name="Last modification date"),
                 ),
                 (
                     "content_type",

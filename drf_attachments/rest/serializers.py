@@ -5,7 +5,6 @@ from drf_attachments.config import config
 from drf_attachments.models.models import Attachment
 from drf_attachments.rest.fields import DownloadURLField
 
-
 __all__ = [
     "AttachmentSerializer",
     "AttachmentSubSerializer",
@@ -35,6 +34,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
             # write-only
             "file",
         )
+
 
 class AttachmentSubSerializer(serializers.ModelSerializer):
     """Sub serializer for nested data inside other serializers"""

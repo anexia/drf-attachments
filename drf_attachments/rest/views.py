@@ -1,9 +1,5 @@
 from django.http import FileResponse, Http404
-from django_filters.rest_framework import DjangoFilterBackend
-from drf_attachments.storage import AttachmentFileStorage
-from drf_attachments.models.models import Attachment
-from drf_attachments.rest.renderers import FileDownloadRenderer
-from drf_attachments.rest.serializers import AttachmentSerializer
+
 from rest_framework import viewsets
 from rest_framework.decorators import action, parser_classes
 from rest_framework.filters import SearchFilter
@@ -11,6 +7,13 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+from drf_attachments.models.models import Attachment
+from drf_attachments.rest.renderers import FileDownloadRenderer
+from drf_attachments.rest.serializers import AttachmentSerializer
+from drf_attachments.storage import AttachmentFileStorage
 
 __all__ = [
     "AttachmentViewSet",
@@ -57,7 +60,7 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         renderer_classes=[JSONRenderer, FileDownloadRenderer],
     )
-    def download(self, request, format=None, *args, **kwargs):
+    def download(self, request, *args, **kwargs):
         """Downloads the uploaded attachment file."""
         attachment = self.get_object()
         extension = attachment.get_extension()

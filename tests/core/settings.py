@@ -112,12 +112,8 @@ ATTACHMENT_DEFAULT_CONTEXT = "ATTACHMENT"
 ATTACHMENT_CONTEXT_VACATION_PHOTO = "VACATION_PHOTO"
 ATTACHMENT_CONTEXT_WORK_PHOTO = "WORK_PHOTO"
 
-ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE = (
-    "testapp.attachments.attachment_content_object_field"
-)
-ATTACHMENT_CONTEXT_TRANSLATIONS_CALLABLE = (
-    "testapp.attachments.attachment_context_translations"
-)
+ATTACHMENT_CONTENT_OBJECT_FIELD_CALLABLE = "testapp.attachments.attachment_content_object_field"
+ATTACHMENT_CONTEXT_TRANSLATIONS_CALLABLE = "testapp.attachments.attachment_context_translations"
 
 ATTACHMENT_MAX_UPLOAD_SIZE = 1024 * 1024 * 25
 
