@@ -13,6 +13,7 @@ from django.db.models import (
     UUIDField,
 )
 from django.utils.translation import gettext_lazy as _
+
 from rest_framework.exceptions import ValidationError
 
 from drf_attachments.config import config
@@ -56,9 +57,7 @@ class Attachment(Model):
 
     meta = JSONField(
         _("meta"),
-        help_text=_(
-            "Additional info about the attachment (e.g. file meta data: mime_type, extension, size)."
-        ),
+        help_text=_("Additional info about the attachment (e.g. file meta data: mime_type, extension, size)."),
         blank=False,
         null=False,
     )
@@ -162,9 +161,7 @@ class Attachment(Model):
             int(settings.ATTACHMENT_MAX_UPLOAD_SIZE),
         )
         self.unique_upload = getattr(meta, "unique_upload", False)
-        self.unique_upload_per_context = getattr(
-            meta, "unique_upload_per_context", False
-        )
+        self.unique_upload_per_context = getattr(meta, "unique_upload_per_context", False)
 
     def set_file_meta(self):
         if self.meta is None:
@@ -204,10 +201,7 @@ class Attachment(Model):
         Validate the mime_type against the AttachmentMeta.valid_mime_types defined in the content_object's model class.
         Raise a ValidationError on failure.
         """
-        if (
-            self.valid_mime_types
-            and self.meta["mime_type"] not in self.valid_mime_types
-        ):
+        if self.valid_mime_types and self.meta["mime_type"] not in self.valid_mime_types:
             error_msg = _(
                 "Invalid mime type {mime_type} detected! It must be one of the following: {valid_mime_types}"
             ).format(
@@ -226,10 +220,7 @@ class Attachment(Model):
         Validate the extension against the AttachmentMeta.valid_extensions defined in the content_object's model class.
         Raise a ValidationError on failure.
         """
-        if (
-            self.valid_extensions
-            and self.meta["extension"] not in self.valid_extensions
-        ):
+        if self.valid_extensions and self.meta["extension"] not in self.valid_extensions:
             error_msg = _(
                 "Invalid extension {extension} detected! It must be one of the following: {valid_extensions}"
             ).format(
@@ -251,9 +242,7 @@ class Attachment(Model):
         Validate the extension and raise a ValidationError on failure.
         """
         if self.min_size and self.file.size < self.min_size:
-            error_msg = _(
-                "File size {size} too small! It must be at least {min_size}"
-            ).format(
+            error_msg = _("File size {size} too small! It must be at least {min_size}").format(
                 size=self.file.size,
                 min_size=self.min_size,
             )
@@ -266,9 +255,7 @@ class Attachment(Model):
 
         # self.max_size is always given (settings.ATTACHMENT_MAX_UPLOAD_SIZE by default and as maximum)
         if self.file.size > self.max_size:
-            error_msg = _(
-                "File size {size} too large! It can only be {max_size}"
-            ).format(
+            error_msg = _("File size {size} too large! It can only be {max_size}").format(
                 size=self.file.size,
                 max_size=self.max_size,
             )

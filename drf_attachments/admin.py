@@ -1,4 +1,3 @@
-from content_disposition import rfc5987_content_disposition
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
@@ -7,6 +6,8 @@ from django.forms.utils import ErrorList
 from django.http import StreamingHttpResponse
 from django.urls import NoReverseMatch, path, reverse
 from django.utils.safestring import mark_safe
+
+from content_disposition import rfc5987_content_disposition
 
 from drf_attachments.config import config
 from drf_attachments.models.models import Attachment
@@ -17,7 +18,7 @@ __all__ = [
 ]
 
 
-class AttachmentAdminMixin(object):
+class AttachmentAdminMixin:
     @staticmethod
     def size(obj):
         return obj.get_size()
@@ -83,9 +84,7 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
             model_name = entity._meta.model_name
 
             try:
-                admin_url = reverse(
-                    f"admin:{app_label}_{model_name}_change", args=(entity.pk,)
-                )
+                admin_url = reverse(f"admin:{app_label}_{model_name}_change", args=(entity.pk,))
                 return mark_safe(f'<a href="{admin_url}">{entity}</a>')
             except NoReverseMatch:
                 return entity
@@ -110,8 +109,7 @@ class AttachmentAdmin(admin.ModelAdmin, AttachmentAdminMixin):
             content_type=attachment.get_mime_type(),
         )
         response["Content-Disposition"] = rfc5987_content_disposition(
-            (attachment.name if attachment.name else str(attachment.pk))
-            + attachment.get_extension()
+            (attachment.name if attachment.name else str(attachment.pk)) + attachment.get_extension()
         )
 
         return response
@@ -169,8 +167,8 @@ class DynamicallyDisabledAttachmentInlineFormSet(BaseGenericInlineFormSet):
         Disables the DELETE checkbox of disabled inline entries.
         """
         super().add_fields(form, index)
-        if hasattr(form, 'disable_inline_fields') and form.disable_inline_fields():
-            form.fields['DELETE'].disabled = True
+        if hasattr(form, "disable_inline_fields") and form.disable_inline_fields():
+            form.fields["DELETE"].disabled = True
 
 
 class BaseAttachmentInlineAdmin(GenericTabularInline, AttachmentAdminMixin):

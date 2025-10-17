@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 from drf_attachments.rest.serializers import AttachmentSubSerializer
+from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 
 class PhotoAlbumSerializer(serializers.ModelSerializer):

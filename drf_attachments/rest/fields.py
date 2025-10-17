@@ -1,4 +1,5 @@
 from django.urls import reverse
+
 from rest_framework import serializers
 
 __all__ = [
@@ -8,9 +9,11 @@ __all__ = [
 
 class DownloadURLField(serializers.Field):
     def __init__(self, *args, **kwargs):
-        super().__init__(read_only=True, *args, **kwargs)
+        kwargs.setdefault("read_only", True)
+        super().__init__(*args, **kwargs)
+
     def get_attribute(self, instance):
-        request = self.context.get('request')
+        request = self.context.get("request")
         relative_url = reverse("attachment-download", kwargs={"pk": instance.pk})
 
         if request is None:

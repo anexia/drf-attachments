@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from generic_relations.relations import GenericRelatedField
+
 from rest_framework import serializers
+
+from generic_relations.relations import GenericRelatedField
+
 from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
 
 
@@ -25,9 +28,7 @@ def attachment_content_object_field():
                 view_name="file-detail",
             ),
         },
-        help_text=_(
-            "Unambiguous URL to a single resource (e.g. <domain>/api/v1/<model>/1/)."
-        ),
+        help_text=_("Unambiguous URL to a single resource (e.g. <domain>/api/v1/<model>/1/)."),
     )
 
 

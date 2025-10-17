@@ -31,14 +31,43 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "flake8>=7.1,<7.2",
     "coverage>=7.2,<7.4",
     "twine>=3.4",
     "pre-commit>=2.17.0,<2.18",
-    "isort>=5.10,<5.11",
-    "black>=22.6.0,<22.7",
 ]
 
 [project.urls]
 Homepage = "https://github.com/anexia/drf-attachments"
 Repository = "https://github.com/anexia/drf-attachments"
+
+[tool.ruff]
+line-length = 120
+respect-gitignore = true
+extend-exclude = [".venv", "__pycache__"]
+show-fixes = true
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["A", "B", "C", "E", "F", "I", "W", "T20", "LOG", "UP", "RUF010", "RUF019"]
+ignore = ["E203", "E266", "E501", "F403", "F405"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["drf-attachment"]
+section-order = [
+    "future",
+    "standard-library",
+    "django",
+    "djangorestframework",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+"djangorestframework" = ["rest_framework"]
+
+[tool.ruff.lint.per-file-ignores]
+"apps.py" = ["F401"]
