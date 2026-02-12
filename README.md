@@ -294,8 +294,9 @@ Change the directory where attachments will be stored by setting the `storage_lo
    ```
 
 ## Auto-formatter setup
-We use isort (https://github.com/pycqa/isort) and black (https://github.com/psf/black) for local auto-formatting and for linting in the CI pipeline.
-The pre-commit framework (https://pre-commit.com) provides GIT hooks for these tools, so they are automatically applied before every commit.
+We use ruff (https://github.com/astral-sh/ruff) for local auto-formatting and for linting in the CI pipeline.
+The pre-commit framework (https://pre-commit.com) provides GIT hooks for these tools, so they are automatically applied
+before every commit.
 
 Steps to activate:
 * Install the pre-commit framework: `pip install pre-commit` (for alternative installation options see https://pre-commit.com/#install)

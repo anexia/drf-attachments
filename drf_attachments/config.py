@@ -2,6 +2,7 @@ import importlib
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 from django.conf import settings
+
 from generic_relations.relations import GenericRelatedField
 
 __all__ = [
@@ -63,9 +64,7 @@ class Config:
         translations = cls.get_context_translations() if translated else {}
 
         contexts = cls.get_contexts(include_default)
-        context_translation_map = {
-            context: translations.get(context, context) for context in contexts
-        }
+        context_translation_map = {context: translations.get(context, context) for context in contexts}
 
         if values_list:
             return list(set(context_translation_map.values()))
@@ -75,17 +74,13 @@ class Config:
     @classmethod
     def get_contexts(cls, include_default) -> Set[str]:
         settings_keys = dir(settings)
-        return {
-            getattr(settings, key)
-            for key in settings_keys
-            if cls.__is_context_setting(key, include_default)
-        }
+        return {getattr(settings, key) for key in settings_keys if cls.__is_context_setting(key, include_default)}
 
     @staticmethod
     def __is_context_setting(key, include_default) -> bool:
-        return (
-            key.startswith("ATTACHMENT_CONTEXT_") and not key.endswith("_CALLABLE")
-        ) or (include_default and key == DEFAULT_CONTEXT_SETTING)
+        return (key.startswith("ATTACHMENT_CONTEXT_") and not key.endswith("_CALLABLE")) or (
+            include_default and key == DEFAULT_CONTEXT_SETTING
+        )
 
     @classmethod
     def translate_context(cls, context):

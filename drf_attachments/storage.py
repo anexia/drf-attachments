@@ -47,4 +47,4 @@ def attachment_upload_path(attachment, filename):
     """
     filename, file_extension = os.path.splitext(filename)
     month_directory = timezone.now().strftime("%Y%m")
-    return f"attachments/{month_directory}/{str(uuid1())}{file_extension}"
+    return f"attachments/{month_directory}/{uuid1()!s}{file_extension}"
