@@ -93,6 +93,14 @@ class MyCustomDynamicallyDisabledAttachmentInlineAdmin(AttachmentInlineAdmin):
     show_change_link = False
 ```
 
+## Django Compatibility Matrix
+
+If your project uses an older version of Django or Django Rest Framework, you can choose an older version of this project.
+
+| This Project | Python Version               | Django Version |
+|--------------|------------------------------|----------------|
+| 1.0.*        | 3.10, 3.11, 3.12, 3.13, 3.14 | 4.2, 5.1       |
+
 
 ## Usage with DRF (ToDo: API needs to be simplified)
 
