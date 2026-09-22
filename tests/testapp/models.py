@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from drf_attachments.models.fields import AttachmentRelation
@@ -70,3 +71,28 @@ class Profile(models.Model):
         valid_mime_types = ["image/jpeg"]
         valid_extensions = [".jpg", ".jpeg"]
         unique_upload = True
+
+
+class Contract(models.Model):
+    """
+    Single contract document stored in its own storage location.
+    """
+
+    name = models.CharField(max_length=50, primary_key=True)
+    attachments = AttachmentRelation()
+
+    class AttachmentMeta:
+        storage_location = settings.CONTRACT_ROOT
+        unique_upload = True
+
+
+class Receipt(models.Model):
+    """
+    Any number of receipts stored in another storage location than the contracts.
+    """
+
+    name = models.CharField(max_length=50, primary_key=True)
+    attachments = AttachmentRelation()
+
+    class AttachmentMeta:
+        storage_location = settings.RECEIPT_ROOT

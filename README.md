@@ -301,6 +301,9 @@ Change the directory where attachments will be stored by setting the `storage_lo
      storage_location = 'path/to/another/directory' # default is settings.PRIVATE_ROOT
    ```
 
+Each attachment resolves its storage from the `AttachmentMeta` of its own content object, so any number of
+models may use different storage locations at the same time.
+
 ## Auto-formatter setup
 We use ruff (https://github.com/astral-sh/ruff) for local auto-formatting and for linting in the CI pipeline.
 The pre-commit framework (https://pre-commit.com) provides GIT hooks for these tools, so they are automatically applied

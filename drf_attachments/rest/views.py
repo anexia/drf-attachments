@@ -13,7 +13,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_attachments.models.models import Attachment
 from drf_attachments.rest.renderers import FileDownloadRenderer
 from drf_attachments.rest.serializers import AttachmentSerializer
-from drf_attachments.storage import AttachmentFileStorage
 
 __all__ = [
     "AttachmentViewSet",
@@ -40,21 +39,6 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Attachment.objects.viewable()
 
-    def get_storage_path(self):
-        attachment = self.get_object()
-        meta = getattr(attachment.content_object, "AttachmentMeta", None)
-        storage_location = getattr(meta, "storage_location", None)
-
-        # Get custom storage location
-        if meta and storage_location:
-            storage = AttachmentFileStorage(location=meta.storage_location)
-        else:
-            # Default storage value from FileField "file"
-            storage = attachment.file.storage
-
-        # Return the file path using the appropriate storage system
-        return storage.path(attachment.file.name)
-
     @action(
         detail=True,
         methods=["GET"],
@@ -64,7 +48,6 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         """Downloads the uploaded attachment file."""
         attachment = self.get_object()
         extension = attachment.get_extension()
-        storage_path = self.get_storage_path()
 
         if attachment.name:
             download_file_name = f"{attachment.name}{extension}"
@@ -77,7 +60,7 @@ class AttachmentViewSet(viewsets.ModelViewSet):
             raise Http404()
 
         return FileResponse(
-            open(storage_path, "rb"),
+            open(attachment.file.path, "rb"),
             as_attachment=True,
             filename=download_file_name,
         )
