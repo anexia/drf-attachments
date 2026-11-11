@@ -4,9 +4,11 @@ from django.urls import include, path
 from rest_framework import routers
 
 from testapp.views import (
+    ContractViewSet,
     DiagramViewSet,
     FileViewSet,
     PhotoAlbumViewSet,
+    ReceiptViewSet,
     ThumbnailViewSet,
 )
 
@@ -17,6 +19,8 @@ router.register(r"photo_album", PhotoAlbumViewSet)
 router.register(r"thumbnail", ThumbnailViewSet)
 router.register(r"diagram", DiagramViewSet)
 router.register(r"file", FileViewSet)
+router.register(r"contract", ContractViewSet)
+router.register(r"receipt", ReceiptViewSet)
 router.register(r"attachment", AttachmentViewSet)
 
 urlpatterns = [path("admin/", admin.site.urls), path("api/", include(router.urls))]

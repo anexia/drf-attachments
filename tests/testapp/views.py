@@ -1,10 +1,12 @@
 from rest_framework import viewsets
 
-from .models import Diagram, File, PhotoAlbum, Thumbnail
+from .models import Contract, Diagram, File, PhotoAlbum, Receipt, Thumbnail
 from .serializers import (
+    ContractSerializer,
     DiagramSerializer,
     FileSerializer,
     PhotoAlbumSerializer,
+    ReceiptSerializer,
     ThumbnailSerializer,
 )
 
@@ -27,3 +29,13 @@ class DiagramViewSet(viewsets.ModelViewSet):
 class FileViewSet(viewsets.ModelViewSet):
     queryset = File.objects.all()
     serializer_class = FileSerializer
+
+
+class ContractViewSet(viewsets.ModelViewSet):
+    queryset = Contract.objects.all()
+    serializer_class = ContractSerializer
+
+
+class ReceiptViewSet(viewsets.ModelViewSet):
+    queryset = Receipt.objects.all()
+    serializer_class = ReceiptSerializer

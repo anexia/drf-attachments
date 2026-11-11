@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from generic_relations.relations import GenericRelatedField
 
-from testapp.models import Diagram, File, PhotoAlbum, Thumbnail
+from testapp.models import Contract, Diagram, File, PhotoAlbum, Receipt, Thumbnail
 
 
 def attachment_content_object_field():
@@ -26,6 +26,14 @@ def attachment_content_object_field():
             File: serializers.HyperlinkedRelatedField(
                 queryset=File.objects.all(),
                 view_name="file-detail",
+            ),
+            Contract: serializers.HyperlinkedRelatedField(
+                queryset=Contract.objects.all(),
+                view_name="contract-detail",
+            ),
+            Receipt: serializers.HyperlinkedRelatedField(
+                queryset=Receipt.objects.all(),
+                view_name="receipt-detail",
             ),
         },
         help_text=_("Unambiguous URL to a single resource (e.g. <domain>/api/v1/<model>/1/)."),

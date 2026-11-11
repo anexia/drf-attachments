@@ -119,3 +119,7 @@ ATTACHMENT_MAX_UPLOAD_SIZE = 1024 * 1024 * 25
 
 # Directory where attachments will be stored
 PRIVATE_ROOT = "private_uploads/"
+
+# Alternative directories used by test models defining an AttachmentMeta.storage_location
+CONTRACT_ROOT = "private_uploads/contracts/"
+RECEIPT_ROOT = "private_uploads/receipts/"
